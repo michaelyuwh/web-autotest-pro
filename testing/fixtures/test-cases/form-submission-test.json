@@ -1,0 +1,267 @@
+{
+  "id": "test-case-form-submission",
+  "name": "User Registration Form Test",
+  "description": "Complete form submission workflow with validation testing",
+  "category": "functional",
+  "tags": ["form", "input", "validation", "submission"],
+  "priority": "high",
+  "timeout": 60000,
+  "retries": 1,
+  "created": "2024-01-15T10:30:00.000Z",
+  "updated": "2024-01-15T10:30:00.000Z",
+  "author": "Test Author",
+  "version": "1.0.0",
+  "metadata": {
+    "browser": "chrome",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  "steps": [
+    {
+      "id": "step-1",
+      "type": "navigate",
+      "description": "Navigate to registration form",
+      "url": "http://localhost:3000/register",
+      "timeout": 10000,
+      "waitForLoadState": "networkidle"
+    },
+    {
+      "id": "step-2",
+      "type": "wait",
+      "description": "Wait for form to be visible",
+      "selector": "#registration-form",
+      "timeout": 5000,
+      "condition": "visible"
+    },
+    {
+      "id": "step-3",
+      "type": "input",
+      "description": "Enter first name",
+      "selector": "#firstName",
+      "value": "John",
+      "timeout": 3000,
+      "options": {
+        "clear": true,
+        "delay": 50
+      }
+    },
+    {
+      "id": "step-4",
+      "type": "input",
+      "description": "Enter last name", 
+      "selector": "#lastName",
+      "value": "Doe",
+      "timeout": 3000,
+      "options": {
+        "clear": true,
+        "delay": 50
+      }
+    },
+    {
+      "id": "step-5",
+      "type": "input",
+      "description": "Enter email address",
+      "selector": "#email",
+      "value": "john.doe@example.com",
+      "timeout": 3000,
+      "options": {
+        "clear": true,
+        "delay": 50
+      }
+    },
+    {
+      "id": "step-6",
+      "type": "input",
+      "description": "Enter password",
+      "selector": "#password",
+      "value": "SecurePass123!",
+      "timeout": 3000,
+      "options": {
+        "clear": true,
+        "delay": 50
+      }
+    },
+    {
+      "id": "step-7",
+      "type": "input",
+      "description": "Confirm password",
+      "selector": "#confirmPassword", 
+      "value": "SecurePass123!",
+      "timeout": 3000,
+      "options": {
+        "clear": true,
+        "delay": 50
+      }
+    },
+    {
+      "id": "step-8",
+      "type": "select",
+      "description": "Select country",
+      "selector": "#country",
+      "value": "United States",
+      "timeout": 3000
+    },
+    {
+      "id": "step-9",
+      "type": "check",
+      "description": "Accept terms and conditions",
+      "selector": "#acceptTerms",
+      "timeout": 3000,
+      "checked": true
+    },
+    {
+      "id": "step-10",
+      "type": "check",
+      "description": "Subscribe to newsletter",
+      "selector": "#newsletter",
+      "timeout": 3000,
+      "checked": true
+    },
+    {
+      "id": "step-11",
+      "type": "screenshot",
+      "description": "Screenshot before form submission",
+      "filename": "form-filled.png",
+      "fullPage": true
+    },
+    {
+      "id": "step-12",
+      "type": "click",
+      "description": "Submit registration form",
+      "selector": "#submitBtn",
+      "timeout": 5000,
+      "options": {
+        "button": "left",
+        "clickCount": 1
+      }
+    },
+    {
+      "id": "step-13",
+      "type": "wait",
+      "description": "Wait for submission response",
+      "selector": ".form-response",
+      "timeout": 10000,
+      "condition": "visible"
+    },
+    {
+      "id": "step-14",
+      "type": "assert",
+      "description": "Verify successful registration message",
+      "selector": ".success-message",
+      "assertion": "text",
+      "expected": "Registration successful! Please check your email to verify your account.",
+      "operator": "contains",
+      "timeout": 5000
+    },
+    {
+      "id": "step-15",
+      "type": "assert",
+      "description": "Verify redirect to confirmation page",
+      "assertion": "url",
+      "expected": "http://localhost:3000/registration-complete",
+      "operator": "equals",
+      "timeout": 5000
+    },
+    {
+      "id": "step-16",
+      "type": "screenshot",
+      "description": "Screenshot of confirmation page",
+      "filename": "registration-complete.png",
+      "fullPage": false
+    }
+  ],
+  "assertions": [
+    {
+      "id": "assertion-1",
+      "description": "Form should be present",
+      "type": "element",
+      "selector": "#registration-form",
+      "property": "visible",
+      "expected": true,
+      "operator": "equals"
+    },
+    {
+      "id": "assertion-2",
+      "description": "All required fields should be present",
+      "type": "elements",
+      "selector": "input[required]",
+      "property": "count",
+      "expected": 5,
+      "operator": "equals"
+    },
+    {
+      "id": "assertion-3",
+      "description": "Submit button should be enabled after form completion",
+      "type": "element",
+      "selector": "#submitBtn",
+      "property": "enabled",
+      "expected": true,
+      "operator": "equals"
+    }
+  ],
+  "validationTests": [
+    {
+      "id": "validation-1",
+      "description": "Test email validation with invalid email",
+      "steps": [
+        {
+          "type": "input",
+          "selector": "#email",
+          "value": "invalid-email"
+        },
+        {
+          "type": "blur",
+          "selector": "#email"
+        },
+        {
+          "type": "assert",
+          "selector": ".email-error",
+          "assertion": "visible",
+          "expected": true
+        }
+      ]
+    },
+    {
+      "id": "validation-2", 
+      "description": "Test password mismatch validation",
+      "steps": [
+        {
+          "type": "input",
+          "selector": "#confirmPassword",
+          "value": "DifferentPassword123!"
+        },
+        {
+          "type": "blur",
+          "selector": "#confirmPassword"
+        },
+        {
+          "type": "assert",
+          "selector": ".password-mismatch-error",
+          "assertion": "visible",
+          "expected": true
+        }
+      ]
+    }
+  ],
+  "expectedResults": {
+    "status": "passed",
+    "duration": "< 30000",
+    "screenshots": 2,
+    "errors": 0,
+    "validationsPassed": 2
+  },
+  "environment": {
+    "baseUrl": "http://localhost:3000",
+    "apiUrl": "http://localhost:8000",
+    "testData": {
+      "userProfile": {
+        "firstName": "John",
+        "lastName": "Doe", 
+        "email": "john.doe@example.com",
+        "country": "United States"
+      }
+    }
+  }
+}

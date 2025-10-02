@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web AutoTest Pro - Settings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: white;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .logo {
+      width: 64px;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 24px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+    
+    .settings-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+    
+    .settings-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .settings-card:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .card-icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+    
+    .setting-group {
+      margin-bottom: 20px;
+    }
+    
+    .setting-group:last-child {
+      margin-bottom: 0;
+    }
+    
+    .setting-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .setting-description {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 12px;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: .4s;
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #4CAF50;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    
+    .input-field {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: white;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .input-field::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .select-field {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: white;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+    }
+    
+    .select-field option {
+      background: #333;
+      color: white;
+    }
+    
+    .btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    
+    .btn-primary {
+      background: rgba(0, 123, 255, 0.3);
+      border-color: rgba(0, 123, 255, 0.4);
+    }
+    
+    .btn-danger {
+      background: rgba(220, 53, 69, 0.3);
+      border-color: rgba(220, 53, 69, 0.4);
+    }
+    
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 32px;
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(40, 167, 69, 0.9);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      transform: translateX(0);
+    }
+    
+    .toast.error {
+      background: rgba(220, 53, 69, 0.9);
+    }
+    
+    .keyboard-shortcuts {
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+    }
+    
+    .shortcut {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .shortcut:last-child {
+      border-bottom: none;
+    }
+    
+    .key {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">AT</div>
+      <h1 class="title">Web AutoTest Pro Settings</h1>
+      <p class="subtitle">Configure your automated testing experience</p>
+    </div>
+    
+    <div class="settings-grid">
+      <!-- Recording Settings -->
+      <div class="settings-card">
+        <h2 class="card-title">
+          <svg class="card-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          Recording
+        </h2>
+        
+        <div class="setting-group">
+          <label class="setting-label">Auto-start recording</label>
+          <p class="setting-description">Automatically start recording when extension is activated</p>
+          <label class="toggle-switch">
+            <input type="checkbox" id="autoStart">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Show recording indicator</label>
+          <p class="setting-description">Display visual indicator when recording is active</p>
+          <label class="toggle-switch">
+            <input type="checkbox" id="showIndicator" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Recording timeout (minutes)</label>
+          <p class="setting-description">Maximum recording duration before auto-stop</p>
+          <input type="number" class="input-field" id="recordingTimeout" value="30" min="1" max="120">
+        </div>
+      </div>
+      
+      <!-- AI Settings -->
+      <div class="settings-card">
+        <h2 class="card-title">
+          <svg class="card-icon" viewBox="0 0 24 24">
+            <path d="M9.5 2A1.5 1.5 0 0 0 8 3.5V5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4V3.5A1.5 1.5 0 0 0 14.5 2h-5z"/>
+          </svg>
+          AI Assistant
+        </h2>
+        
+        <div class="setting-group">
+          <label class="setting-label">Enable AI optimization</label>
+          <p class="setting-description">Use AI to optimize test steps and suggest improvements</p>
+          <label class="toggle-switch">
+            <input type="checkbox" id="enableAI" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">AI model</label>
+          <p class="setting-description">Select the AI model for test optimization</p>
+          <select class="select-field" id="aiModel">
+            <option value="phi-3-mini">Phi-3 Mini (Recommended)</option>
+            <option value="phi-3-medium">Phi-3 Medium</option>
+            <option value="gemma-2b">Gemma 2B</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Auto-generate assertions</label>
+          <p class="setting-description">Automatically suggest test assertions based on UI elements</p>
+          <label class="toggle-switch">
+            <input type="checkbox" id="autoAssertions" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Browser Settings -->
+      <div class="settings-card">
+        <h2 class="card-title">
+          <svg class="card-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          Browser
+        </h2>
+        
+        <div class="setting-group">
+          <label class="setting-label">Default wait timeout (seconds)</label>
+          <p class="setting-description">How long to wait for elements to appear</p>
+          <input type="number" class="input-field" id="waitTimeout" value="10" min="1" max="60">
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Capture screenshots</label>
+          <p class="setting-description">Take screenshots during test execution</p>
+          <label class="toggle-switch">
+            <input type="checkbox" id="captureScreenshots" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Highlight elements</label>
+          <p class="setting-description">Highlight interacted elements during recording</p>
+          <label class="toggle-switch">
+            <input type="checkbox" id="highlightElements" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Data Settings -->
+      <div class="settings-card">
+        <h2 class="card-title">
+          <svg class="card-icon" viewBox="0 0 24 24">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+          </svg>
+          Data & Storage
+        </h2>
+        
+        <div class="setting-group">
+          <label class="setting-label">Web app URL</label>
+          <p class="setting-description">URL of the Web AutoTest Pro web application</p>
+          <input type="url" class="input-field" id="webAppUrl" value="http://localhost:3000" placeholder="https://autotest.example.com">
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Export format</label>
+          <p class="setting-description">Default format for exporting test cases</p>
+          <select class="select-field" id="exportFormat">
+            <option value="json">JSON</option>
+            <option value="playwright">Playwright</option>
+            <option value="cypress">Cypress</option>
+            <option value="selenium">Selenium</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Data retention (days)</label>
+          <p class="setting-description">How long to keep test recordings and results</p>
+          <input type="number" class="input-field" id="dataRetention" value="30" min="1" max="365">
+        </div>
+      </div>
+      
+      <!-- Keyboard Shortcuts -->
+      <div class="settings-card">
+        <h2 class="card-title">
+          <svg class="card-icon" viewBox="0 0 24 24">
+            <path d="M3,7V17A2,2 0 0,0 5,19H19A2,2 0 0,0 21,17V7A2,2 0 0,0 19,5H5A2,2 0 0,0 3,7M5,7H19V17H5V7M6,8V10H8V8H6M9,8V10H11V8H9M12,8V10H14V8H12M15,8V10H17V8H15M18,8V10H20V8H18M6,11V13H11V11H6M12,11V13H20V11H12M6,14V16H8V14H6M9,14V16H11V14H9M12,14V16H20V14H12Z"/>
+          </svg>
+          Keyboard Shortcuts
+        </h2>
+        
+        <div class="keyboard-shortcuts">
+          <div class="shortcut">
+            <span>Start/Stop Recording</span>
+            <span class="key">Ctrl+Shift+R</span>
+          </div>
+          <div class="shortcut">
+            <span>Toggle Picture-in-Picture</span>
+            <span class="key">Ctrl+Shift+P</span>
+          </div>
+          <div class="shortcut">
+            <span>Open Web App</span>
+            <span class="key">Ctrl+Shift+W</span>
+          </div>
+          <div class="shortcut">
+            <span>Open Settings</span>
+            <span class="key">Ctrl+Shift+S</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button class="btn btn-primary" id="saveBtn">Save Settings</button>
+      <button class="btn" id="resetBtn">Reset to Defaults</button>
+      <button class="btn btn-danger" id="clearDataBtn">Clear All Data</button>
+    </div>
+  </div>
+  
+  <div id="toast" class="toast"></div>
+  
+  <script src="options.js"></script>
+</body>
+</html>

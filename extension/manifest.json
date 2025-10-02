@@ -1,0 +1,81 @@
+{
+  "manifest_version": 3,
+  "name": "Web AutoTest Pro",
+  "version": "1.0.0",
+  "description": "AI-powered browser testing tool with cross-browser support and real-time recording",
+  
+  "permissions": [
+    "tabs",
+    "activeTab", 
+    "storage",
+    "scripting",
+    "webNavigation",
+    "downloads",
+    "notifications",
+    "background"
+  ],
+  
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AutoTest Pro",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["injected.js", "popup.html"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ],
+  
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  
+  "options_page": "options.html",
+  
+  "commands": {
+    "start_recording": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R"
+      },
+      "description": "Start/stop recording"
+    },
+    "toggle_pip": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+P"
+      },
+      "description": "Toggle picture-in-picture"
+    }
+  },
+  
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  }
+}

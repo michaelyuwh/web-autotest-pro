@@ -1,0 +1,366 @@
+name: Security Scanning & CVE Monitoring
+
+on:
+  schedule:
+    # Run security scans daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - 'package*.json'
+      - '**/requirements.txt'
+      - 'Dockerfile*'
+      - '.github/workflows/security.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'package*.json'
+      - '**/requirements.txt'
+      - 'Dockerfile*'
+
+env:
+  NODE_VERSION: '18.x'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run npm audit
+      run: |
+        npm audit --audit-level=moderate --json > npm-audit-results.json || true
+        npm audit --audit-level=moderate
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install Python security tools
+      run: |
+        pip install safety bandit semgrep
+
+    - name: Run Python safety check
+      run: |
+        cd testing
+        safety check --json --output safety-results.json || true
+        safety check
+
+    - name: Run Bandit security linter
+      run: |
+        bandit -r . -f json -o bandit-results.json || true
+        bandit -r . -ll
+
+    - name: Upload security scan results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-scan-results
+        path: |
+          npm-audit-results.json
+          safety-results.json
+          bandit-results.json
+        retention-days: 30
+
+  container-scan:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: |
+        docker build -t web-autotest-pro:latest .
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'web-autotest-pro:latest'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Run Trivy filesystem scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        format: 'json'
+        output: 'trivy-fs-results.json'
+
+    - name: Upload container scan results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: container-scan-results
+        path: |
+          trivy-results.sarif
+          trivy-fs-results.json
+        retention-days: 30
+
+  code-scan:
+    name: Static Code Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript, python
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
+    - name: Run Semgrep scan
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/owasp-top-ten
+          p/javascript
+          p/typescript
+          p/python
+
+  browser-extension-scan:
+    name: Browser Extension Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        cd browser-extension
+        npm ci
+
+    - name: Build extension
+      run: |
+        cd browser-extension
+        npm run build
+
+    - name: Check manifest permissions
+      run: |
+        cd browser-extension
+        node -e "
+          const manifest = require('./dist/manifest.json');
+          const permissions = manifest.permissions || [];
+          const sensitivePerms = permissions.filter(p => 
+            ['tabs', 'activeTab', 'storage', 'cookies', 'history'].includes(p)
+          );
+          if (sensitivePerms.length > 0) {
+            console.log('Sensitive permissions detected:', sensitivePerms);
+          }
+          console.log('All permissions:', permissions);
+        "
+
+    - name: Scan for hardcoded secrets
+      run: |
+        cd browser-extension
+        grep -r -E "(api[_-]?key|password|secret|token)" dist/ || true
+
+    - name: Check CSP headers
+      run: |
+        cd browser-extension
+        node -e "
+          const manifest = require('./dist/manifest.json');
+          const csp = manifest.content_security_policy;
+          if (!csp || csp.includes('unsafe-eval') || csp.includes('unsafe-inline')) {
+            console.error('Unsafe CSP detected or missing');
+            process.exit(1);
+          }
+          console.log('CSP is secure:', csp);
+        "
+
+  mobile-app-scan:
+    name: Mobile App Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install mobile app dependencies
+      run: |
+        cd android-app/web-autotest-companion
+        npm ci
+
+    - name: Check for sensitive data in code
+      run: |
+        cd android-app/web-autotest-companion
+        grep -r -E "(api[_-]?key|password|secret|token|private)" src/ || true
+
+    - name: Validate app permissions
+      run: |
+        cd android-app/web-autotest-companion
+        if [ -f app.json ]; then
+          node -e "
+            const config = require('./app.json');
+            const permissions = config.expo?.android?.permissions || [];
+            console.log('Android permissions:', permissions);
+          "
+        fi
+
+  security-report:
+    name: Generate Security Report
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, container-scan, code-scan, browser-extension-scan, mobile-app-scan]
+    if: always()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download all scan results
+      uses: actions/download-artifact@v4
+      with:
+        path: scan-results
+
+    - name: Generate security report
+      run: |
+        mkdir -p security-reports
+        
+        cat > security-reports/security-summary.md << 'EOF'
+        # Security Scan Summary
+        
+        **Scan Date:** $(date -u)
+        **Repository:** ${{ github.repository }}
+        **Commit:** ${{ github.sha }}
+        
+        ## Scan Results Overview
+        
+        ### Dependency Vulnerabilities
+        - **NPM Audit:** $(if [ -f scan-results/security-scan-results/npm-audit-results.json ]; then echo "✅ Completed"; else echo "❌ Failed"; fi)
+        - **Python Safety:** $(if [ -f scan-results/security-scan-results/safety-results.json ]; then echo "✅ Completed"; else echo "❌ Failed"; fi)
+        - **Bandit Scan:** $(if [ -f scan-results/security-scan-results/bandit-results.json ]; then echo "✅ Completed"; else echo "❌ Failed"; fi)
+        
+        ### Container Security
+        - **Trivy Scan:** $(if [ -f scan-results/container-scan-results/trivy-results.sarif ]; then echo "✅ Completed"; else echo "❌ Failed"; fi)
+        
+        ### Static Code Analysis
+        - **CodeQL:** $(if [ "${{ needs.code-scan.result }}" == "success" ]; then echo "✅ Completed"; else echo "❌ Failed"; fi)
+        - **Semgrep:** $(if [ "${{ needs.code-scan.result }}" == "success" ]; then echo "✅ Completed"; else echo "❌ Failed"; fi)
+        
+        ### Component-Specific Scans  
+        - **Browser Extension:** $(if [ "${{ needs.browser-extension-scan.result }}" == "success" ]; then echo "✅ Passed"; else echo "❌ Issues Found"; fi)
+        - **Mobile App:** $(if [ "${{ needs.mobile-app-scan.result }}" == "success" ]; then echo "✅ Passed"; else echo "❌ Issues Found"; fi)
+        
+        ## Recommendations
+        
+        1. **Regular Updates:** Keep all dependencies up to date
+        2. **Security Headers:** Ensure proper CSP and security headers
+        3. **Permission Review:** Regularly audit application permissions
+        4. **Secret Management:** Use secure secret management practices
+        5. **Container Security:** Keep base images updated and scan regularly
+        
+        ## Next Steps
+        
+        - Review detailed scan results in artifacts
+        - Address high and critical vulnerabilities first
+        - Update security policies as needed
+        - Schedule regular security reviews
+        
+        ---
+        *Generated by Web AutoTest Pro Security Pipeline*
+        EOF
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-report
+        path: security-reports/
+        retention-days: 90
+
+    - name: Comment on PR with security summary
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const summary = fs.readFileSync('security-reports/security-summary.md', 'utf8');
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## 🔒 Security Scan Results\n\n${summary}`
+          });
+
+  notify-security-issues:
+    name: Notify Security Issues
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, container-scan, code-scan]
+    if: failure() && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Send security alert
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 Security Scan Failures Detected',
+            body: `Security scans have detected critical issues in the main branch.
+            
+            **Failed Jobs:**
+            - Dependency Scan: ${{ needs.dependency-scan.result }}
+            - Container Scan: ${{ needs.container-scan.result }}  
+            - Code Scan: ${{ needs.code-scan.result }}
+            
+            **Action Required:**
+            Please review the scan results and address critical vulnerabilities immediately.
+            
+            **Commit:** ${{ github.sha }}
+            **Workflow:** ${{ github.workflow }}
+            **Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+            labels: ['security', 'critical', 'bug']
+          });

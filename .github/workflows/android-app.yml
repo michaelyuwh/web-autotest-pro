@@ -1,0 +1,238 @@
+name: Android App CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'android-app/**'
+      - '.github/workflows/android-app.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'android-app/**'
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  lint-and-test:
+    name: Lint and Test Android App
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        cd android-app/web-autotest-companion
+        npm ci
+
+    - name: Install Expo CLI
+      run: npm install -g @expo/cli@latest
+
+    - name: Lint Android app
+      run: |
+        cd android-app/web-autotest-companion
+        npx expo lint
+
+    - name: Type check
+      run: |
+        cd android-app/web-autotest-companion
+        npx tsc --noEmit
+
+  build-apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Install dependencies
+      run: |
+        cd android-app/web-autotest-companion
+        npm ci
+
+    - name: Install EAS CLI
+      run: npm install -g eas-cli@latest
+
+    - name: Build APK with EAS
+      run: |
+        cd android-app/web-autotest-companion
+        eas build --platform android --profile preview --non-interactive
+      env:
+        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: android-app/web-autotest-companion/*.apk
+        retention-days: 30
+
+  build-ios:
+    name: Build iOS App
+    runs-on: macos-latest
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        cd android-app/web-autotest-companion
+        npm ci
+
+    - name: Install EAS CLI
+      run: npm install -g eas-cli@latest
+
+    - name: Build iOS with EAS
+      run: |
+        cd android-app/web-autotest-companion
+        eas build --platform ios --profile preview --non-interactive
+      env:
+        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+    - name: Upload iOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-app
+        path: android-app/web-autotest-companion/*.ipa
+        retention-days: 30
+
+  web-build:
+    name: Build Web Version
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        cd android-app/web-autotest-companion
+        npm ci
+
+    - name: Build web version
+      run: |
+        cd android-app/web-autotest-companion
+        npx expo export --platform web
+
+    - name: Upload web build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-app-web
+        path: android-app/web-autotest-companion/dist/
+        retention-days: 30
+
+    - name: Deploy web version to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: android-app/web-autotest-companion/dist
+        destination_dir: mobile-app
+        cname: mobile.autotest-pro.dev # Replace with your domain
+
+  play-store-deploy:
+    name: Deploy to Google Play Store
+    runs-on: ubuntu-latest
+    needs: build-apk
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release]')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download APK
+      uses: actions/download-artifact@v4
+      with:
+        name: android-apk
+        path: ./
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install EAS CLI
+      run: npm install -g eas-cli@latest
+
+    - name: Submit to Google Play Store
+      run: |
+        cd android-app/web-autotest-companion
+        eas submit --platform android --non-interactive
+      env:
+        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+
+  app-store-deploy:
+    name: Deploy to Apple App Store
+    runs-on: macos-latest
+    needs: build-ios
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release]')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download iOS app
+      uses: actions/download-artifact@v4
+      with:
+        name: ios-app
+        path: ./
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install EAS CLI
+      run: npm install -g eas-cli@latest
+
+    - name: Submit to Apple App Store
+      run: |
+        cd android-app/web-autotest-companion  
+        eas submit --platform ios --non-interactive
+      env:
+        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        APPLE_ID: ${{ secrets.APPLE_ID }}

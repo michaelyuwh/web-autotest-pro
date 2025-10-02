@@ -1,0 +1,187 @@
+[
+  {
+    "id": "user-profile-1",
+    "firstName": "Alice",
+    "lastName": "Johnson",
+    "email": "alice.johnson@example.com",
+    "phone": "+1-555-0123",
+    "dateOfBirth": "1990-05-15",
+    "address": {
+      "street": "123 Main Street",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001",
+      "country": "United States"
+    },
+    "preferences": {
+      "newsletter": true,
+      "notifications": false,
+      "language": "en",
+      "theme": "light"
+    },
+    "metadata": {
+      "source": "manual",
+      "testCategory": "positive"
+    }
+  },
+  {
+    "id": "user-profile-2", 
+    "firstName": "Bob",
+    "lastName": "Smith",
+    "email": "bob.smith@test.com",
+    "phone": "+44-20-7946-0958",
+    "dateOfBirth": "1985-12-03",
+    "address": {
+      "street": "45 Queen Street",
+      "city": "London",
+      "state": "England",
+      "zipCode": "SW1A 1AA",
+      "country": "United Kingdom"
+    },
+    "preferences": {
+      "newsletter": false,
+      "notifications": true,
+      "language": "en-GB",
+      "theme": "dark"
+    },
+    "metadata": {
+      "source": "automated",
+      "testCategory": "positive"
+    }
+  },
+  {
+    "id": "user-profile-3",
+    "firstName": "María",
+    "lastName": "González",
+    "email": "maria.gonzalez@ejemplo.es",
+    "phone": "+34-91-123-4567",
+    "dateOfBirth": "1992-08-22",
+    "address": {
+      "street": "Calle Mayor 10",
+      "city": "Madrid", 
+      "state": "Madrid",
+      "zipCode": "28013",
+      "country": "Spain"
+    },
+    "preferences": {
+      "newsletter": true,
+      "notifications": true,
+      "language": "es",
+      "theme": "auto"
+    },
+    "metadata": {
+      "source": "import",
+      "testCategory": "internationalization"
+    }
+  },
+  {
+    "id": "user-profile-invalid-1",
+    "firstName": "",
+    "lastName": "TestUser",
+    "email": "invalid-email",
+    "phone": "123",
+    "dateOfBirth": "2050-01-01",
+    "address": {
+      "street": "",
+      "city": "",
+      "state": "",
+      "zipCode": "invalid",
+      "country": ""
+    },
+    "preferences": {
+      "newsletter": null,
+      "notifications": null,
+      "language": "",
+      "theme": ""
+    },
+    "metadata": {
+      "source": "validation",
+      "testCategory": "negative"
+    }
+  },
+  {
+    "id": "user-profile-edge-1",
+    "firstName": "A",
+    "lastName": "Z",
+    "email": "a@b.co",
+    "phone": "+1-5",
+    "dateOfBirth": "1900-01-01",
+    "address": {
+      "street": "1",
+      "city": "A",
+      "state": "B",
+      "zipCode": "1",
+      "country": "US"
+    },
+    "preferences": {
+      "newsletter": false,
+      "notifications": false,
+      "language": "en",
+      "theme": "light"
+    },
+    "metadata": {
+      "source": "edge-case",
+      "testCategory": "boundary"
+    }
+  },
+  {
+    "id": "user-profile-long-1",
+    "firstName": "VeryLongFirstNameThatExceedsTypicalLimitsForTestingPurposes",
+    "lastName": "VeryLongLastNameThatExceedsTypicalLimitsForTestingPurposes", 
+    "email": "very.long.email.address.for.testing.purposes@very-long-domain-name-for-testing.example.com",
+    "phone": "+1-555-123-4567-890-123-456",
+    "dateOfBirth": "1995-06-30",
+    "address": {
+      "street": "Very Long Street Name That Exceeds Typical Character Limits For Address Fields",
+      "city": "VeryLongCityNameForTesting",
+      "state": "VeryLongStateName",
+      "zipCode": "12345-6789-0123",
+      "country": "United States of America (Long Form)"
+    },
+    "preferences": {
+      "newsletter": true,
+      "notifications": true,
+      "language": "en-US",
+      "theme": "dark"
+    },
+    "metadata": {
+      "source": "stress-test",
+      "testCategory": "boundary"
+    }
+  },
+  {
+    "id": "user-profile-special-chars",
+    "firstName": "José-María",
+    "lastName": "O'Connor-Smith",
+    "email": "jose.maria+test@example-domain.co.uk",
+    "phone": "+33-1-23-45-67-89",
+    "dateOfBirth": "1988-02-29",
+    "address": {
+      "street": "Rue de l'Université, Apt. 4B",
+      "city": "Saint-Étienne",
+      "state": "Auvergne-Rhône-Alpes",
+      "zipCode": "42000",
+      "country": "France"
+    },
+    "preferences": {
+      "newsletter": true,
+      "notifications": false,
+      "language": "fr-FR",
+      "theme": "auto"
+    },
+    "metadata": {
+      "source": "special-characters",
+      "testCategory": "internationalization"
+    }
+  },
+  {
+    "id": "user-profile-minimal",
+    "firstName": "Min",
+    "lastName": "User",
+    "email": "min@test.com",
+    "metadata": {
+      "source": "minimal",
+      "testCategory": "minimal-required"
+    }
+  }
+]

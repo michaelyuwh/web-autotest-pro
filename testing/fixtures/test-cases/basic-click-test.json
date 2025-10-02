@@ -1,0 +1,120 @@
+{
+  "id": "test-case-basic-click",
+  "name": "Basic Button Click Test",
+  "description": "Simple test case that navigates to a page and clicks a button",
+  "category": "functional",
+  "tags": ["click", "navigation", "basic"],
+  "priority": "high",
+  "timeout": 30000,
+  "retries": 2,
+  "created": "2024-01-15T10:00:00.000Z",
+  "updated": "2024-01-15T10:00:00.000Z",
+  "author": "Test Author",
+  "version": "1.0.0",
+  "metadata": {
+    "browser": "chrome",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  },
+  "steps": [
+    {
+      "id": "step-1",
+      "type": "navigate",
+      "description": "Navigate to the test page",
+      "url": "http://localhost:3000/test-page",
+      "timeout": 10000,
+      "waitForLoadState": "networkidle",
+      "options": {
+        "waitUntil": "domcontentloaded"
+      }
+    },
+    {
+      "id": "step-2", 
+      "type": "wait",
+      "description": "Wait for page to be fully loaded",
+      "selector": "#main-content",
+      "timeout": 5000,
+      "condition": "visible"
+    },
+    {
+      "id": "step-3",
+      "type": "click",
+      "description": "Click the primary action button",
+      "selector": "#test-button",
+      "timeout": 5000,
+      "coordinates": {
+        "x": 200,
+        "y": 300
+      },
+      "options": {
+        "button": "left",
+        "clickCount": 1,
+        "delay": 100
+      }
+    },
+    {
+      "id": "step-4",
+      "type": "wait",
+      "description": "Wait for success message to appear",
+      "selector": ".success-message",
+      "timeout": 3000,
+      "condition": "visible"
+    },
+    {
+      "id": "step-5",
+      "type": "assert",
+      "description": "Verify success message text",
+      "selector": ".success-message",
+      "assertion": "text",
+      "expected": "Action completed successfully!",
+      "operator": "equals",
+      "timeout": 2000
+    },
+    {
+      "id": "step-6",
+      "type": "screenshot",
+      "description": "Take screenshot of final state",
+      "filename": "final-state.png",
+      "fullPage": false,
+      "options": {
+        "quality": 90,
+        "format": "png"
+      }
+    }
+  ],
+  "assertions": [
+    {
+      "id": "assertion-1",
+      "description": "Page title should be correct",
+      "type": "title",
+      "expected": "Test Page - Web AutoTest Pro",
+      "operator": "equals"
+    },
+    {
+      "id": "assertion-2", 
+      "description": "Button should be clickable",
+      "type": "element",
+      "selector": "#test-button",
+      "property": "enabled",
+      "expected": true,
+      "operator": "equals"
+    }
+  ],
+  "expectedResults": {
+    "status": "passed",
+    "duration": "< 15000",
+    "screenshots": 1,
+    "errors": 0
+  },
+  "environment": {
+    "baseUrl": "http://localhost:3000",
+    "apiUrl": "http://localhost:8000",
+    "testData": {
+      "userId": "test-user-123",
+      "sessionId": "test-session-456"
+    }
+  }
+}

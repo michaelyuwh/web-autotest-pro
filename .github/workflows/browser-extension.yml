@@ -1,0 +1,240 @@
+name: Browser Extension CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'browser-extension/**'
+      - 'shared/**'
+      - '.github/workflows/browser-extension.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'browser-extension/**'
+      - 'shared/**'
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  lint-and-test:
+    name: Lint and Test Extension
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd shared && npm ci
+        cd ../browser-extension && npm ci
+
+    - name: Build shared package
+      run: |
+        cd shared
+        npm run build
+
+    - name: Lint extension
+      run: |
+        cd browser-extension
+        npm run lint
+
+    - name: Type check
+      run: |
+        cd browser-extension
+        npm run type-check
+
+    - name: Run tests
+      run: |
+        cd browser-extension
+        npm run test
+
+  build-chrome:
+    name: Build Chrome Extension
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd shared && npm ci
+        cd ../browser-extension && npm ci
+
+    - name: Build shared package
+      run: |
+        cd shared
+        npm run build
+
+    - name: Build Chrome extension
+      run: |
+        cd browser-extension
+        npm run build:chrome
+
+    - name: Create Chrome extension package
+      run: |
+        cd browser-extension/dist/chrome
+        zip -r ../../../chrome-extension.zip .
+
+    - name: Upload Chrome extension artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: chrome-extension
+        path: chrome-extension.zip
+        retention-days: 30
+
+  build-firefox:
+    name: Build Firefox Extension
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd shared && npm ci
+        cd ../browser-extension && npm ci
+
+    - name: Build shared package
+      run: |
+        cd shared
+        npm run build
+
+    - name: Build Firefox extension
+      run: |
+        cd browser-extension
+        npm run build:firefox
+
+    - name: Create Firefox extension package
+      run: |
+        cd browser-extension/dist/firefox
+        zip -r ../../../firefox-extension.zip .
+
+    - name: Upload Firefox extension artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: firefox-extension
+        path: firefox-extension.zip
+        retention-days: 30
+
+  publish-chrome:
+    name: Publish to Chrome Web Store
+    runs-on: ubuntu-latest
+    needs: build-chrome
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release]')
+    
+    steps:
+    - name: Download Chrome extension
+      uses: actions/download-artifact@v4
+      with:
+        name: chrome-extension
+
+    - name: Publish to Chrome Web Store
+      uses: mnao305/chrome-extension-upload@v4.0.1
+      with:
+        file-path: chrome-extension.zip
+        extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+        client-id: ${{ secrets.CHROME_CLIENT_ID }}
+        client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+        refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        publish: true
+
+  publish-firefox:
+    name: Publish to Firefox Add-ons
+    runs-on: ubuntu-latest
+    needs: build-firefox
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release]')
+    
+    steps:
+    - name: Download Firefox extension
+      uses: actions/download-artifact@v4
+      with:
+        name: firefox-extension
+
+    - name: Publish to Firefox Add-ons
+      uses: trmcnvn/firefox-addon@v1
+      with:
+        uuid: ${{ secrets.FIREFOX_EXTENSION_UUID }}
+        xpi: firefox-extension.zip
+        manifest: browser-extension/src/manifest.json
+        api-key: ${{ secrets.FIREFOX_API_KEY }}
+        api-secret: ${{ secrets.FIREFOX_API_SECRET }}
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-chrome, build-firefox]
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release]')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download Chrome extension
+      uses: actions/download-artifact@v4
+      with:
+        name: chrome-extension
+
+    - name: Download Firefox extension
+      uses: actions/download-artifact@v4
+      with:
+        name: firefox-extension
+
+    - name: Get version from manifest
+      id: version
+      run: |
+        VERSION=$(node -p "require('./browser-extension/src/manifest.json').version")
+        echo "version=v$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: Browser Extension ${{ steps.version.outputs.version }}
+        draft: false
+        prerelease: false
+        files: |
+          chrome-extension.zip
+          firefox-extension.zip
+        body: |
+          ## Browser Extension Release ${{ steps.version.outputs.version }}
+          
+          ### Changes
+          - Automated release from main branch
+          - Chrome and Firefox extensions included
+          
+          ### Installation
+          - **Chrome**: Install from [Chrome Web Store](https://chrome.google.com/webstore)
+          - **Firefox**: Install from [Firefox Add-ons](https://addons.mozilla.org)
+          
+          ### Manual Installation
+          1. Download the appropriate extension file
+          2. Follow browser-specific installation instructions
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
