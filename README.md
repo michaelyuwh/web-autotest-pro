@@ -1,49 +1,342 @@
 # 🚀 Web AutoTest Pro
 
-**The Complete Browser-Based Automated Testing Platform**
+<div align="center">
 
-A comprehensive, AI-powered testing solution featuring cross-platform synchronization, intelligent test optimization, and enterprise-grade deployment capabilities.
+![Web AutoTest Pro Logo](https://via.placeholder.com/400x100/007BFF/FFFFFF?text=Web+AutoTest+Pro)
 
-[![GitHub Stars](https://img.shields.io/github/stars/michaelyuwh/web-autotest-pro?style=for-the-badge)](https://github.com/michaelyuwh/web-autotest-pro)
-[![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/michaelyuwh/web-autotest-pro/web-app.yml?style=for-the-badge)](https://github.com/michaelyuwh/web-autotest-pro/actions)
-[![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen?style=for-the-badge)](https://github.com/michaelyuwh/web-autotest-pro)
+**AI-Powered Browser Testing Platform with Cross-Platform Support**
 
----
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-4.9+-blue.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.2+-61DAFB.svg)](https://reactjs.org/)
+[![PWA](https://img.shields.io/badge/PWA-Ready-green.svg)](https://developers.google.com/web/progressive-web-apps)
+[![AI Powered](https://img.shields.io/badge/AI-Phi--3%20Mini-purple.svg)](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct)
 
-## 🌟 **What Makes Web AutoTest Pro Special?**
+[🌐 Live Demo](#demo) • [📚 Documentation](./docs/README.md) • [🎯 Features](#features) • [🚀 Quick Start](#quick-start) • [💻 Installation](#installation)
 
-- **🤖 AI-Powered Intelligence**: Smart element detection, test optimization, and failure analysis
-- **📱 Multi-Platform**: Web app, browser extensions, and mobile companion app
-- **⚡ Real-Time Sync**: WebSocket-based synchronization across all platforms
-- **🔒 Enterprise Security**: JWT authentication, encryption, and OWASP compliance
-- **🚀 DevOps Ready**: Complete CI/CD pipelines and containerization
-- **📊 Advanced Analytics**: Performance monitoring and intelligent reporting
+</div>
 
 ---
 
-## 🏗️ **Platform Components**
+## 📖 About
 
-### 🌐 **Progressive Web Application**
-- **Modern React 18** with TypeScript and Tailwind CSS
-- **Offline Support** with advanced service workers
-- **Real-time Test Execution** with live progress updates
-- **Visual Test Editor** with drag-and-drop interface
-- **PWA Features** for mobile and desktop installation
+Web AutoTest Pro is a modern, AI-powered browser testing platform that simplifies web testing for both technical and non-technical users. Built with React 18, TypeScript, and powered by Microsoft's Phi-3 Mini AI model, it offers intelligent test generation, cross-browser automation, and comprehensive reporting capabilities.
 
-### 🔌 **Browser Extensions**
-- **Manifest V3** for Chrome and Firefox
-- **Content Script Recording** with intelligent DOM capture
-- **Cross-tab Communication** for seamless workflows
-- **Element Selector Generation** with AI optimization
-- **Background Service Workers** for persistent functionality
+### 🎯 Key Highlights
 
-### 📱 **Android Companion App**
-- **React Native** with Expo managed workflow
-- **Real-time Monitoring** dashboard with push notifications
-- **Material Design 3** UI components
-- **Native Android Integration** with Jetpack Compose
-- **WebSocket Synchronization** for instant updates
+- **🤖 AI-Powered Testing** - Local Phi-3 Mini integration for intelligent test generation and debugging
+- **🌐 Cross-Browser Support** - Works with Chrome, Firefox, Edge, Safari, and IE mode
+- **📱 Multi-Platform** - PWA, Browser Extension, and Android Companion App
+- **🎥 Visual Recording** - Picture-in-Picture mode with real-time action capture
+- **📊 Advanced Reporting** - Export to PDF, HTML, JSON, CSV, XML with embedded videos
+- **🔒 Security First** - Local processing, zero external dependencies, comprehensive security hardening
+- **⚡ Performance Optimized** - Real-time monitoring, memory leak prevention, optimized builds
+
+---
+
+## 🖼️ Screenshots & Demo
+
+### 🎨 Modern Liquid Glass UI Design
+
+<div align="center">
+<img src="https://via.placeholder.com/800x500/1a1a1a/FFFFFF?text=Dashboard+View" alt="Dashboard" style="border-radius: 10px; margin: 10px;">
+<p><i>Main Dashboard with Liquid Glass Design</i></p>
+</div>
+
+### 🎬 Recording Interface
+
+<div align="center">
+<img src="https://via.placeholder.com/800x500/007BFF/FFFFFF?text=Recording+Interface" alt="Recording Interface" style="border-radius: 10px; margin: 10px;">
+<p><i>Picture-in-Picture Recording with Real-time Controls</i></p>
+</div>
+
+### 📊 Test Results & Analytics
+
+<div align="center">
+<img src="https://via.placeholder.com/800x500/28A745/FFFFFF?text=Test+Results" alt="Test Results" style="border-radius: 10px; margin: 10px;">
+<p><i>Comprehensive Test Results with Performance Metrics</i></p>
+</div>
+
+### 🤖 AI Assistant
+
+<div align="center">
+<img src="https://via.placeholder.com/800x500/6F42C1/FFFFFF?text=AI+Assistant" alt="AI Assistant" style="border-radius: 10px; margin: 10px;">
+<p><i>AI-Powered Test Optimization and Debugging</i></p>
+</div>
+
+---
+
+## ✨ Features
+
+### � Core Testing Features
+- **Smart Test Recording** - Capture user interactions with intelligent element detection
+- **Cross-Browser Automation** - Playwright-powered execution across all major browsers
+- **Visual Regression Testing** - Screenshot comparison and visual diff analysis
+- **API Testing Integration** - REST/GraphQL endpoint testing capabilities
+- **Responsive Testing** - Multi-device and viewport testing
+
+### 🤖 AI-Powered Capabilities
+- **Intelligent Test Generation** - Natural language to test case conversion
+- **Smart Element Detection** - Dynamic selector optimization and healing
+- **Automatic Test Optimization** - Performance and reliability improvements
+- **Error Analysis & Debugging** - AI-powered failure investigation
+- **Test Maintenance** - Automatic updates for UI changes
+
+### 📱 Multi-Platform Support
+- **🌐 Progressive Web App** - Installable, offline-capable web application
+- **🔧 Browser Extension** - Chrome, Firefox, Edge, Safari extension
+- **📱 Android Companion** - React Native mobile app for remote monitoring
+- **🐳 Docker Deployment** - Containerized deployment for teams
+
+### 📊 Advanced Reporting
+- **📄 PDF Reports** - Professional test execution reports
+- **🌐 HTML Reports** - Interactive web-based results
+- **� Analytics Dashboard** - Test metrics and trends analysis
+- **🎥 Video Recording** - Full session recordings with Picture-in-Picture
+- **📈 Performance Metrics** - Load times, memory usage, and optimization insights
+
+---
+
+## 🚀 Quick Start
+
+### 1️⃣ Web Application (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/michaelyuwh/web-autotest-pro.git
+cd web-autotest-pro
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Open http://localhost:3000 in your browser
+```
+
+### 2️⃣ Browser Extension
+
+```bash
+# Build the extension
+npm run build:extension
+
+# Load unpacked extension in Chrome:
+# 1. Open chrome://extensions/
+# 2. Enable "Developer mode"
+# 3. Click "Load unpacked" and select the `extension/dist` folder
+```
+
+### 3️⃣ Docker Deployment
+
+```bash
+# Build and run with Docker
+docker build -t web-autotest-pro .
+docker run -p 3000:3000 web-autotest-pro
+
+# Or use Docker Compose
+docker-compose up -d
+```
+
+---
+
+## 🎮 How to Use
+
+### 📝 Creating Your First Test
+
+1. **🌐 Navigate to Dashboard**
+   ```
+   Open the web application and click "New Recording"
+   ```
+
+2. **🎯 Enter Target URL**
+   ```
+   Input the website URL you want to test (e.g., https://example.com)
+   ```
+
+3. **▶️ Start Recording**
+   ```
+   Click "Start Recording" and interact with your website normally
+   ```
+
+4. **⏹️ Stop & Save**
+   ```
+   Click "Stop Recording" and give your test a descriptive name
+   ```
+
+### 🤖 Using AI Features
+
+1. **🧠 Enable AI Assistant**
+   ```
+   Toggle the AI switch in Settings (requires ~500MB for Phi-3 model)
+   ```
+
+2. **✨ Generate Tests from Description**
+   ```
+   Describe your test scenario: "Test login with invalid credentials"
+   AI will generate the complete test steps
+   ```
+
+3. **🔍 AI Debugging**
+   ```
+   When tests fail, AI analyzes the issue and suggests fixes
+   ```
+
+### 📊 Running Tests & Reports
+
+1. **🚀 Execute Tests**
+   ```
+   Select test cases and click "Run Tests"
+   Choose browser (Chrome/Firefox/Edge/Safari)
+   ```
+
+2. **📈 View Results**
+   ```
+   Real-time execution progress with live video feed
+   Detailed step-by-step results with screenshots
+   ```
+
+3. **📄 Export Reports**
+   ```
+   Choose format: PDF, HTML, JSON, CSV, or XML
+   Reports include videos, screenshots, and metrics
+   ```
+
+### 📱 Mobile Companion App
+
+1. **📲 Install Android App**
+   ```
+   Build and install the companion app
+   Connect to your web application instance
+   ```
+
+2. **🔄 Remote Monitoring**
+   ```
+   Monitor test execution from mobile device
+   Receive notifications for test completion
+   ```
+
+---
+
+## 💻 Installation & Setup
+
+### � Prerequisites
+
+- **Node.js** 18.0+ 
+- **npm** 8.0+
+- **Git** 2.30+
+- **Modern Browser** (Chrome 90+, Firefox 88+, Edge 90+, Safari 14+)
+
+### 🔧 Development Setup
+
+```bash
+# 1. Clone and navigate
+git clone https://github.com/michaelyuwh/web-autotest-pro.git
+cd web-autotest-pro
+
+# 2. Install dependencies for all packages
+npm install
+
+# 3. Build shared libraries
+npm run build:shared
+
+# 4. Start development servers
+npm run dev
+
+# 5. Open additional terminals for other packages:
+# Terminal 2: Extension development
+cd extension && npm run dev
+
+# Terminal 3: Android app (requires Expo CLI)
+cd android-app/web-autotest-companion && npm start
+```
+
+### 🏗️ Production Build
+
+```bash
+# Build all packages for production
+npm run build
+
+# Build specific packages
+npm run build:web-app      # Web application
+npm run build:extension    # Browser extension  
+npm run build:android      # Android app
+npm run build:docs         # Documentation
+```
+
+### � Docker Deployment
+
+```bash
+# Quick deployment
+docker-compose up -d
+
+# Custom deployment
+docker build -t web-autotest-pro .
+docker run -d \
+  -p 3000:3000 \
+  -p 3001:3001 \
+  --name autotest-pro \
+  web-autotest-pro
+```
+
+### ⚙️ Configuration
+
+Create a `.env` file in the root directory:
+
+```env
+# Application Configuration
+VITE_APP_NAME=Web AutoTest Pro
+VITE_APP_VERSION=1.0.0
+VITE_APP_ENV=production
+
+# AI Configuration
+VITE_AI_ENABLED=true
+VITE_AI_MODEL=phi-3-mini
+VITE_AI_WEBGPU_ENABLED=true
+
+# Security Configuration
+VITE_CSP_ENABLED=true
+VITE_SECURITY_HEADERS=true
+
+# Performance Configuration
+VITE_PWA_ENABLED=true
+VITE_SERVICE_WORKER=true
+```
+
+---
+
+## 🏗️ Architecture Overview
+
+```mermaid
+graph TB
+    A[Web App - React PWA] --> D[Shared Core]
+    B[Browser Extension] --> D
+    C[Android App] --> D
+    
+    D --> E[AI Service - Phi-3 Mini]
+    D --> F[Test Engine - Playwright]
+    D --> G[Security Layer]
+    D --> H[Performance Monitor]
+    
+    E --> I[Local WebGPU/WASM]
+    F --> J[Cross-Browser Automation]
+    G --> K[Input Sanitization & CSP]
+    H --> L[Real-time Metrics]
+```
+
+### 📦 Package Structure
+
+```
+web-autotest-pro/
+├── 🌐 web-app/              # React PWA application
+├── 🔧 extension/            # Browser extension (Manifest V3)
+├── 📱 android-app/          # React Native companion
+├── 📚 shared/               # Common utilities & types
+├── 🧪 testing/              # Test configurations & E2E tests
+├── 📖 docs/                 # Comprehensive documentation
+├── 🐳 docker/               # Docker configurations
+└── 🔧 scripts/              # Build and deployment scripts
+```
 
 ---
 
@@ -270,14 +563,101 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - **Discord**: [Join our developer community](https://discord.gg/web-autotest-pro)
 - **Twitter**: [@WebAutoTestPro](https://twitter.com/WebAutoTestPro)
 
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
+
+### 🛠️ Development Workflow
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+### 🧪 Running Tests
+
+```bash
+# Run all tests
+npm run test
+
+# Run specific test suites
+npm run test:unit          # Unit tests
+npm run test:integration   # Integration tests
+npm run test:e2e          # End-to-end tests
+npm run test:accessibility # Accessibility tests
+```
+
+---
+
+## 📚 Documentation
+
+- 📖 [**User Guide**](./docs/USER_GUIDE.md) - Complete user documentation
+- 🔧 [**Developer Guide**](./docs/DEVELOPER_GUIDE.md) - Technical implementation details
+- 🚀 [**Deployment Guide**](./docs/DEPLOYMENT_GUIDE.md) - Production deployment instructions
+- 📊 [**API Reference**](./docs/API_REFERENCE.md) - Complete API documentation
+- 🎯 [**Advanced Features**](./docs/ADVANCED_RECOMMENDATIONS.md) - Power user features
+
+---
+
+## 🔧 Browser Support
+
+| Browser | Web App | Extension | Notes |
+|---------|---------|-----------|-------|
+| Chrome 90+ | ✅ Full | ✅ Full | Recommended browser |
+| Firefox 88+ | ✅ Full | ✅ Full | Full WebGPU support |
+| Edge 90+ | ✅ Full | ✅ Full | Including IE mode |
+| Safari 14+ | ✅ Full | ✅ Limited | WebGPU in development |
+
+---
+
+## 🚀 Roadmap
+
+### 🎯 Version 1.1 (Q1 2026)
+- [ ] Visual test editor with drag-and-drop
+- [ ] Cloud sync and collaboration features
+- [ ] Advanced AI model fine-tuning
+- [ ] Integration with popular CI/CD platforms
+
+### 🎯 Version 2.0 (Q2 2026)
+- [ ] Multi-language support (Spanish, French, German)
+- [ ] Performance testing and load simulation
+- [ ] Advanced analytics and ML insights
+- [ ] Enterprise SSO and security features
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Microsoft** for the Phi-3 Mini model
+- **Playwright** team for cross-browser automation
+- **React** and **TypeScript** communities
+- **Open source contributors** who made this possible
+
+---
+
+## 📞 Support & Contact
+
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/michaelyuwh/web-autotest-pro/issues)
+- � **Feature Requests**: [GitHub Discussions](https://github.com/michaelyuwh/web-autotest-pro/discussions)
+- 📧 **Email**: support@webautotestpro.com
+- � **Discord**: [Join our community](https://discord.gg/webautotestpro)
+
 ---
 
 <div align="center">
 
-**Made with ❤️ by the Web AutoTest Pro Team**
+**⭐ If you find Web AutoTest Pro useful, please consider giving it a star!**
 
-[🌟 Star us on GitHub](https://github.com/michaelyuwh/web-autotest-pro) • 
-[📖 Read the Docs](docs/) • 
-[🚀 Try the Demo](https://demo.autotest-pro.dev)
+[![GitHub stars](https://img.shields.io/github/stars/michaelyuwh/web-autotest-pro.svg?style=social&label=Star)](https://github.com/michaelyuwh/web-autotest-pro)
+[![GitHub forks](https://img.shields.io/github/forks/michaelyuwh/web-autotest-pro.svg?style=social&label=Fork)](https://github.com/michaelyuwh/web-autotest-pro/fork)
+
+Made with ❤️ by the Web AutoTest Pro Team
 
 </div>
