@@ -83,3 +83,10 @@ coverage/
 # Temporary files
 tmp/
 temp/
+# Ignore GitHub community files created for setup (per user request)
+.github/DISCUSSION_TEMPLATE.md
+.github/FUNDING.yml
+.github/ISSUE_TEMPLATE/
+.github/pull_request_template.md
+.github/wiki/
+CODE_OF_CONDUCT.md
