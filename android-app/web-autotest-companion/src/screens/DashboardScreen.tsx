@@ -45,23 +45,35 @@ const DashboardScreen = () => {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = async () => {
+    const loadDashboardData = async () => {
     try {
-      // Mock data for now - would fetch from API
-      setStats({
-        totalTestCases: 15,
-        recentExecutions: 8,
-        successRate: 87.5,
-        activeTests: 2,
-      });
+      // Enhanced mock data with real-time metrics
+      const recentExecutions = activeExecutions.slice(-10);
+      const passedExecutions = recentExecutions.filter(e => e.status === 'completed').length;
+      const totalExecutions = recentExecutions.length || 1; // Avoid division by zero
       
+      const mockStats: DashboardStats = {
+        totalTestCases: 23,
+        recentExecutions: totalExecutions,
+        successRate: totalExecutions > 0 ? (passedExecutions / totalExecutions) * 100 : 0,
+        activeTests: activeExecutions.filter(e => e.status === 'running').length,
+      };
+      
+      setStats(mockStats);
       setSyncStatus({
         connected: isConnected,
         lastSync: new Date(),
-        pendingChanges: Math.floor(Math.random() * 5),
+        pendingChanges: connectionError ? 1 : 0,
       });
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+      console.error('Error loading dashboard data:', error);
+      // Show fallback stats
+      setStats({
+        totalTestCases: 0,
+        recentExecutions: 0,
+        successRate: 0,
+        activeTests: 0,
+      });
     }
   };
 

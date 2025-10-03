@@ -40,6 +40,18 @@ const RealtimeExecutionMonitor: React.FC<RealtimeExecutionMonitorProps> = ({
     return Math.round((completedSteps / execution.steps.length) * 100);
   };
 
+  const getCurrentStepInfo = (execution: TestExecution) => {
+    const currentStep = execution.steps.find(step => step.status === 'running');
+    if (currentStep) {
+      return {
+        stepName: `Step ${currentStep.id}`,
+        stepIndex: execution.steps.indexOf(currentStep) + 1,
+        totalSteps: execution.steps.length
+      };
+    }
+    return null;
+  };
+
   const getExecutionDuration = (execution: TestExecution) => {
     const start = new Date(execution.startTime).getTime();
     const end = execution.endTime ? new Date(execution.endTime).getTime() : Date.now();
