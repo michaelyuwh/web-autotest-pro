@@ -11,7 +11,6 @@ export default defineConfig({
       strategies: 'generateSW',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB limit
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -51,11 +50,11 @@ export default defineConfig({
     'process.env': {}
   },
   optimizeDeps: {
-    include: ['react', 'react-dom']
+    include: ['react', 'react-dom', 'react-router-dom']
   },
   build: {
     target: 'esnext',
-    // Enable advanced minification
+    // Enable advanced minification for production
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -112,13 +111,24 @@ export default defineConfig({
     },
     // Set realistic chunk size limits
     chunkSizeWarningLimit: 800,
-    // Enable source maps for production debugging
-    sourcemap: false, // Disable in production for smaller bundle
+    // Disable source maps in production for smaller bundle
+    sourcemap: false,
     // Enable asset inlining for small files
-    assetsInlineLimit: 4096
+    assetsInlineLimit: 4096,
+    // Enable CSS code splitting
+    cssCodeSplit: true
   },
   server: {
     port: 3000,
-    open: true
+    open: true,
+    // Enable HMR for better development experience
+    hmr: {
+      overlay: true
+    }
+  },
+  // Production optimizations
+  esbuild: {
+    drop: ['console', 'debugger'],
+    pure: ['console.log', 'console.debug', 'console.info']
   }
 });

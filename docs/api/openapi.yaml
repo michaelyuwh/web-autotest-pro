@@ -1,0 +1,986 @@
+openapi: 3.0.3
+info:
+  title: Web AutoTest Pro API
+  description: |
+    Comprehensive API for browser-based automated testing tools.
+    
+    ## Features
+    - Test case management and execution
+    - Cross-browser testing support
+    - AI-powered test generation
+    - Real-time execution monitoring
+    - Performance analytics
+    - Visual regression testing
+    
+    ## Authentication
+    The API uses JWT tokens for authentication. Include the token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+    
+    ## Rate Limiting
+    - 1000 requests per hour for authenticated users
+    - 100 requests per hour for unauthenticated users
+    
+    ## Error Handling
+    All errors follow RFC 7807 Problem Details format.
+    
+  version: 1.0.0
+  contact:
+    name: Web AutoTest Pro Team
+    email: support@webautotestpro.com
+    url: https://webautotestpro.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.webautotestpro.com/v1
+    description: Production server
+  - url: https://staging-api.webautotestpro.com/v1
+    description: Staging server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /test-cases:
+    get:
+      summary: List test cases
+      description: Retrieve a paginated list of test cases with optional filtering and sorting
+      tags:
+        - Test Cases
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based)
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: status
+          in: query
+          description: Filter by test case status
+          schema:
+            type: string
+            enum: [active, inactive, archived]
+        - name: tag
+          in: query
+          description: Filter by tag
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sort field and direction
+          schema:
+            type: string
+            enum: [name_asc, name_desc, created_asc, created_desc, updated_asc, updated_desc]
+            default: updated_desc
+      responses:
+        '200':
+          description: Successfully retrieved test cases
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TestCase'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create test case
+      description: Create a new test case
+      tags:
+        - Test Cases
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTestCaseRequest'
+      responses:
+        '201':
+          description: Test case created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /test-cases/{id}:
+    get:
+      summary: Get test case
+      description: Retrieve a specific test case by ID
+      tags:
+        - Test Cases
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test case ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully retrieved test case
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update test case
+      description: Update an existing test case
+      tags:
+        - Test Cases
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test case ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTestCaseRequest'
+      responses:
+        '200':
+          description: Test case updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete test case
+      description: Delete a test case
+      tags:
+        - Test Cases
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test case ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Test case deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /test-cases/{id}/execute:
+    post:
+      summary: Execute test case
+      description: Execute a test case with optional configuration
+      tags:
+        - Test Execution
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test case ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecuteTestRequest'
+      responses:
+        '202':
+          description: Test execution started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestExecution'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /executions:
+    get:
+      summary: List test executions
+      description: Retrieve a paginated list of test executions
+      tags:
+        - Test Execution
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: status
+          in: query
+          description: Filter by execution status
+          schema:
+            type: string
+            enum: [pending, running, completed, failed, cancelled]
+        - name: test_case_id
+          in: query
+          description: Filter by test case ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully retrieved test executions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TestExecution'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /executions/{id}:
+    get:
+      summary: Get test execution
+      description: Retrieve a specific test execution by ID
+      tags:
+        - Test Execution
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test execution ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully retrieved test execution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestExecution'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /executions/{id}/stop:
+    post:
+      summary: Stop test execution
+      description: Stop a running test execution
+      tags:
+        - Test Execution
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test execution ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Test execution stopped
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestExecution'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /ai/generate-test:
+    post:
+      summary: Generate AI test case
+      description: Generate a test case using AI based on requirements
+      tags:
+        - AI Services
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateTestRequest'
+      responses:
+        '200':
+          description: Test case generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCase'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /reports/analytics:
+    get:
+      summary: Get analytics report
+      description: Retrieve analytics data for test executions
+      tags:
+        - Reports
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Start date for analytics (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          required: true
+          description: End date for analytics (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: granularity
+          in: query
+          description: Data granularity
+          schema:
+            type: string
+            enum: [hour, day, week, month]
+            default: day
+      responses:
+        '200':
+          description: Successfully retrieved analytics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsReport'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    TestCase:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - steps
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the test case
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          description: Test case name
+          example: "Login with valid credentials"
+        description:
+          type: string
+          description: Detailed description of the test case
+          example: "Verify that user can login with valid username and password"
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStep'
+          description: List of test steps
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestAssertion'
+          description: List of test assertions
+        tags:
+          type: array
+          items:
+            type: string
+          description: Test case tags
+          example: ["authentication", "smoke"]
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          description: Test case priority
+          example: "high"
+        status:
+          type: string
+          enum: [active, inactive, archived]
+          description: Test case status
+          example: "active"
+        estimatedDuration:
+          type: integer
+          description: Estimated execution time in seconds
+          example: 120
+        browserSupport:
+          type: array
+          items:
+            type: string
+          description: Supported browsers
+          example: ["chrome", "firefox", "safari"]
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2023-12-01T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2023-12-01T15:30:00Z"
+        createdBy:
+          type: string
+          description: User who created the test case
+          example: "john.doe@example.com"
+
+    TestStep:
+      type: object
+      required:
+        - id
+        - type
+        - action
+        - target
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [action, assertion, wait]
+        action:
+          type: string
+          description: Action to perform
+          example: "click"
+        target:
+          type: string
+          description: Target element selector
+          example: "#login-button"
+        value:
+          type: string
+          description: Value for input actions
+          example: "user@example.com"
+        timeout:
+          type: integer
+          description: Step timeout in milliseconds
+          example: 5000
+        screenshot:
+          type: boolean
+          description: Take screenshot after step
+          default: false
+        optional:
+          type: boolean
+          description: Whether the step is optional
+          default: false
+
+    TestAssertion:
+      type: object
+      required:
+        - id
+        - type
+        - target
+        - condition
+        - expectedValue
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [element, text, attribute, url, performance]
+        target:
+          type: string
+          description: Target element or property
+        condition:
+          type: string
+          enum: [equals, contains, exists, not_exists, greater_than, less_than]
+        expectedValue:
+          type: string
+          description: Expected value for assertion
+        timeout:
+          type: integer
+          description: Assertion timeout in milliseconds
+          default: 5000
+
+    TestExecution:
+      type: object
+      required:
+        - id
+        - testCaseId
+        - status
+        - startTime
+        - configuration
+      properties:
+        id:
+          type: string
+          format: uuid
+        testCaseId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, running, completed, failed, cancelled]
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+          description: Execution duration in milliseconds
+        configuration:
+          $ref: '#/components/schemas/ExecutionConfiguration'
+        results:
+          $ref: '#/components/schemas/ExecutionResults'
+        error:
+          type: string
+          description: Error message if execution failed
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExecutionLog'
+
+    ExecutionConfiguration:
+      type: object
+      required:
+        - browser
+        - viewport
+      properties:
+        browser:
+          type: string
+          enum: [chrome, firefox, safari, edge]
+        viewport:
+          type: object
+          properties:
+            width:
+              type: integer
+              example: 1920
+            height:
+              type: integer
+              example: 1080
+        headless:
+          type: boolean
+          default: false
+        screenshots:
+          type: boolean
+          default: true
+        video:
+          type: boolean
+          default: false
+        parallel:
+          type: boolean
+          default: false
+
+    ExecutionResults:
+      type: object
+      properties:
+        passed:
+          type: integer
+          description: Number of passed assertions
+        failed:
+          type: integer
+          description: Number of failed assertions
+        skipped:
+          type: integer
+          description: Number of skipped steps
+        screenshots:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: URLs to captured screenshots
+        performance:
+          type: object
+          properties:
+            loadTime:
+              type: integer
+              description: Page load time in milliseconds
+            networkRequests:
+              type: integer
+              description: Number of network requests
+            memoryUsage:
+              type: integer
+              description: Memory usage in bytes
+
+    ExecutionLog:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        level:
+          type: string
+          enum: [debug, info, warn, error]
+        message:
+          type: string
+        data:
+          type: object
+          description: Additional log data
+
+    CreateTestCaseRequest:
+      type: object
+      required:
+        - name
+        - description
+        - steps
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStep'
+          minItems: 1
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestAssertion'
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          default: medium
+        browserSupport:
+          type: array
+          items:
+            type: string
+
+    UpdateTestCaseRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStep'
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestAssertion'
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        status:
+          type: string
+          enum: [active, inactive, archived]
+        browserSupport:
+          type: array
+          items:
+            type: string
+
+    ExecuteTestRequest:
+      type: object
+      required:
+        - configuration
+      properties:
+        configuration:
+          $ref: '#/components/schemas/ExecutionConfiguration'
+        priority:
+          type: string
+          enum: [low, normal, high]
+          default: normal
+        notificationEmail:
+          type: string
+          format: email
+          description: Email to notify when execution completes
+
+    GenerateTestRequest:
+      type: object
+      required:
+        - requirements
+        - url
+      properties:
+        requirements:
+          type: string
+          description: Natural language description of test requirements
+          example: "Test user login functionality with valid and invalid credentials"
+        url:
+          type: string
+          format: uri
+          description: Target URL for testing
+          example: "https://example.com/login"
+        includeNegativeTests:
+          type: boolean
+          default: true
+          description: Whether to include negative test scenarios
+        complexity:
+          type: string
+          enum: [simple, medium, complex]
+          default: medium
+          description: Desired test complexity level
+
+    AnalyticsReport:
+      type: object
+      properties:
+        summary:
+          type: object
+          properties:
+            totalExecutions:
+              type: integer
+            successRate:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+            averageDuration:
+              type: integer
+              description: Average execution time in milliseconds
+            topFailures:
+              type: array
+              items:
+                type: object
+                properties:
+                  testCaseId:
+                    type: string
+                    format: uuid
+                  testCaseName:
+                    type: string
+                  failureCount:
+                    type: integer
+        timeSeries:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+              executions:
+                type: integer
+              successes:
+                type: integer
+              failures:
+                type: integer
+              averageDuration:
+                type: integer
+
+    Pagination:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - totalPages
+      properties:
+        page:
+          type: integer
+          description: Current page number
+        limit:
+          type: integer
+          description: Items per page
+        total:
+          type: integer
+          description: Total number of items
+        totalPages:
+          type: integer
+          description: Total number of pages
+        hasNext:
+          type: boolean
+          description: Whether there is a next page
+        hasPrevious:
+          type: boolean
+          description: Whether there is a previous page
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "https://webautotestpro.com/problems/bad-request"
+              title:
+                type: string
+                example: "Bad Request"
+              status:
+                type: integer
+                example: 400
+              detail:
+                type: string
+                example: "The request is invalid"
+              instance:
+                type: string
+                example: "/test-cases"
+
+    Unauthorized:
+      description: Unauthorized - invalid or missing authentication
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "https://webautotestpro.com/problems/unauthorized"
+              title:
+                type: string
+                example: "Unauthorized"
+              status:
+                type: integer
+                example: 401
+              detail:
+                type: string
+                example: "Authentication required"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "https://webautotestpro.com/problems/not-found"
+              title:
+                type: string
+                example: "Not Found"
+              status:
+                type: integer
+                example: 404
+              detail:
+                type: string
+                example: "The requested resource was not found"
+
+    ValidationError:
+      description: Validation error - invalid request data
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "https://webautotestpro.com/problems/validation-error"
+              title:
+                type: string
+                example: "Validation Error"
+              status:
+                type: integer
+                example: 422
+              detail:
+                type: string
+                example: "The request data is invalid"
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: "name"
+                    message:
+                      type: string
+                      example: "Name is required"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "https://webautotestpro.com/problems/internal-error"
+              title:
+                type: string
+                example: "Internal Server Error"
+              status:
+                type: integer
+                example: 500
+              detail:
+                type: string
+                example: "An unexpected error occurred"

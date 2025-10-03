@@ -1,61 +1,16 @@
-// Simplified Playwright executor for PWA compatibility
-// Full Playwright integration will be handled by the Electron app or browser extension
+// Playwright Executor - Uses shared types and proper Playwright integration
+import { TestCase, TestAction, TestExecution, ExecutionStep, ExecutionStatus, ActionType, Screenshot } from '@web-autotest-pro/shared';
+import { chromium, firefox, webkit, Browser, BrowserContext, Page } from 'playwright';
 
 export interface ExecutionOptions {
   browser: 'chromium' | 'firefox' | 'webkit';
   headless: boolean;
-  slowMo: number;
+  slowMotion: number;
   timeout: number;
-  screenshot: boolean;
+  screenshots: boolean;
   video: boolean;
   trace: boolean;
   viewport?: { width: number; height: number };
-}
-
-export interface TestAction {
-  id: string;
-  type: 'click' | 'type' | 'navigate' | 'wait' | 'screenshot' | 'assertion';
-  selector?: string;
-  value?: string;
-  expected?: string;
-  timeout?: number;
-}
-
-export interface TestCase {
-  id: string;
-  name: string;
-  description?: string;
-  actions: TestAction[];
-  url?: string;
-}
-
-export interface TestExecution {
-  id: string;
-  testCaseId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  startTime: Date;
-  endTime?: Date;
-  steps: ExecutionStep[];
-  screenshots: Screenshot[];
-  error?: string;
-}
-
-export interface ExecutionStep {
-  id: string;
-  actionId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  startTime: Date;
-  endTime?: Date;
-  error?: string;
-  screenshot?: string;
-}
-
-export interface Screenshot {
-  id: string;
-  stepId: string;
-  timestamp: Date;
-  path: string;
-  data?: string;
 }
 
 export class PlaywrightExecutor {
@@ -67,11 +22,14 @@ export class PlaywrightExecutor {
 
   constructor(options: ExecutionOptions) {
     this.options = {
-      timeout: 30000,
-      screenshots: true,
-      video: false,
-      slowMotion: 0,
-      ...options
+      browser: options.browser || 'chromium',
+      headless: options.headless ?? true,
+      slowMotion: options.slowMotion ?? 0,
+      timeout: options.timeout ?? 30000,
+      screenshots: options.screenshots ?? true,
+      video: options.video ?? false,
+      trace: options.trace ?? false,
+      viewport: options.viewport
     };
   }
 
@@ -125,11 +83,9 @@ export class PlaywrightExecutor {
       status: ExecutionStatus.RUNNING,
       startTime: Date.now(),
       browser: this.options.browser,
-      steps: [],
       results: [],
       screenshots: [],
-      logs: [],
-      videos: []
+      logs: []
     };
 
     this.currentExecution = execution;
@@ -160,7 +116,11 @@ export class PlaywrightExecutor {
           status: 'running'
         };
 
-        execution.steps!.push(step);
+        // Add steps array if it doesn't exist
+        if (!execution.steps) {
+          execution.steps = [];
+        }
+        execution.steps.push(step);
 
         try {
           const startTime = Date.now();

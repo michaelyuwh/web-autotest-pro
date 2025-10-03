@@ -1,0 +1,60 @@
+{
+  "compilerOptions": {
+    // Enhanced Type Safety Configuration
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    
+    // Additional Quality Checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    
+    // Module Configuration
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": false,
+    "skipLibCheck": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    
+    // Path Mapping
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./shared/src/*"],
+      "@components/*": ["./web-app/src/components/*"],
+      "@services/*": ["./web-app/src/services/*"],
+      "@utils/*": ["./web-app/src/utils/*"],
+      "@types/*": ["./shared/src/types/*"]
+    }
+  },
+  "include": [
+    "shared/src/**/*",
+    "web-app/src/**/*",
+    "extension/src/**/*",
+    "testing/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

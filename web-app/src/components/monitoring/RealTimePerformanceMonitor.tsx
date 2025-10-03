@@ -52,9 +52,20 @@ export const RealTimePerformanceMonitor: React.FC<RealTimePerformanceMonitorProp
       const currentTime = Date.now();
       const executionTime = currentTime - startTime;
 
-      // Get memory usage if available
-      const memoryUsage = (performance as any).memory 
-        ? (performance as any).memory.usedJSHeapSize / (1024 * 1024) // Convert to MB
+      // Get memory usage if available - use proper typing
+      interface PerformanceMemory {
+        usedJSHeapSize: number;
+        totalJSHeapSize: number;
+        jsHeapSizeLimit: number;
+      }
+      
+      interface ExtendedPerformance extends Performance {
+        memory?: PerformanceMemory;
+      }
+      
+      const extendedPerformance = performance as ExtendedPerformance;
+      const memoryUsage = extendedPerformance.memory 
+        ? extendedPerformance.memory.usedJSHeapSize / (1024 * 1024) // Convert to MB
         : 0;
 
       const newMetrics: PerformanceMetrics = {
@@ -80,8 +91,12 @@ export const RealTimePerformanceMonitor: React.FC<RealTimePerformanceMonitorProp
       });
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [isActive, testId]);
+    // Cleanup function to prevent memory leaks
+    return () => {
+      clearInterval(interval);
+      logger.info('Performance monitor cleanup', { testId });
+    };
+  }, [isActive, testId, onMetricsUpdate]); // Added onMetricsUpdate to dependencies
 
   const formatTime = (ms: number) => {
     if (ms < 1000) return `${ms}ms`;

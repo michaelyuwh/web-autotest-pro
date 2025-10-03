@@ -40,6 +40,9 @@ const CACHE_FIRST_RESOURCES = [
   '/static/'
 ];
 
+// Workbox manifest placeholder - will be replaced during build
+self.__WB_MANIFEST;
+
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker...');
   

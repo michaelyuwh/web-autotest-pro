@@ -1,61 +1,16 @@
 // Simplified Playwright executor for PWA compatibility
 // Full Playwright integration will be handled by the Electron app or browser extension
+import { TestCase, TestAction, TestExecution, ExecutionStep, ExecutionStatus, ActionType, Screenshot } from '@web-autotest-pro/shared';
 
 export interface ExecutionOptions {
   browser: 'chromium' | 'firefox' | 'webkit';
   headless: boolean;
-  slowMo: number;
+  slowMotion: number;
   timeout: number;
-  screenshot: boolean;
+  screenshots: boolean;
   video: boolean;
   trace: boolean;
   viewport?: { width: number; height: number };
-}
-
-export interface TestAction {
-  id: string;
-  type: 'click' | 'type' | 'navigate' | 'wait' | 'screenshot' | 'assertion';
-  selector?: string;
-  value?: string;
-  expected?: string;
-  timeout?: number;
-}
-
-export interface TestCase {
-  id: string;
-  name: string;
-  description?: string;
-  actions: TestAction[];
-  url?: string;
-}
-
-export interface TestExecution {
-  id: string;
-  testCaseId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  startTime: Date;
-  endTime?: Date;
-  steps: ExecutionStep[];
-  screenshots: Screenshot[];
-  error?: string;
-}
-
-export interface ExecutionStep {
-  id: string;
-  actionId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  startTime: Date;
-  endTime?: Date;
-  error?: string;
-  screenshot?: string;
-}
-
-export interface Screenshot {
-  id: string;
-  stepId: string;
-  timestamp: Date;
-  path: string;
-  data?: string;
 }
 
 // Mock implementation for PWA compatibility
@@ -80,10 +35,12 @@ export class PlaywrightExecutor {
     const execution: TestExecution = {
       id: `exec-${Date.now()}`,
       testCaseId: testCase.id,
-      status: 'running',
-      startTime: new Date(),
-      steps: [],
-      screenshots: []
+      status: ExecutionStatus.RUNNING,
+      startTime: Date.now(),
+      results: [],
+      screenshots: [],
+      logs: [],
+      browser: this.options.browser
     };
 
     this.currentExecution = execution;
@@ -94,28 +51,29 @@ export class PlaywrightExecutor {
       // Simulate test execution
       for (const action of testCase.actions) {
         const step: ExecutionStep = {
-          id: `step-${Date.now()}`,
-          actionId: action.id,
-          status: 'running',
-          startTime: new Date()
+          action,
+          status: 'running'
         };
 
+        // Initialize steps array if needed
+        if (!execution.steps) {
+          execution.steps = [];
+        }
         execution.steps.push(step);
 
         // Simulate action execution delay
         await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 500));
 
-        step.status = 'completed';
-        step.endTime = new Date();
+        step.status = 'passed';
       }
 
-      execution.status = 'completed';
-      execution.endTime = new Date();
+      execution.status = ExecutionStatus.COMPLETED;
+      execution.endTime = Date.now();
 
     } catch (error) {
-      execution.status = 'failed';
-      execution.error = error instanceof Error ? error.message : 'Unknown error';
-      execution.endTime = new Date();
+      execution.status = ExecutionStatus.FAILED;
+      execution.error = 'Mock execution failed';
+      execution.endTime = Date.now();
     }
 
     return execution;

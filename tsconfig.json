@@ -14,29 +14,18 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": ".",
-    "paths": {
-      "@shared/*": ["shared/src/*"],
-      "@web/*": ["web-app/src/*"],
-      "@extension/*": ["extension/src/*"]
-    },
-    "types": [
-      "chrome",
-      "firefox-webext-browser",
-      "node"
-    ]
+    "jsx": "react-jsx"
   },
-  "include": [
-    "web-app/src/**/*",
-    "extension/src/**/*",
-    "shared/src/**/*",
-    "**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "android-app"
+  "files": [],
+  "references": [
+    {
+      "path": "./shared"
+    },
+    {
+      "path": "./web-app"
+    },
+    {
+      "path": "./extension"
+    }
   ]
 }

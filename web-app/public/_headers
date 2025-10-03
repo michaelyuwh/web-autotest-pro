@@ -1,0 +1,40 @@
+/*
+  # Security Headers Configuration
+  # These headers help prevent common web vulnerabilities
+  
+  # Prevent framing attacks (clickjacking)
+  X-Frame-Options: DENY
+  
+  # Prevent MIME type sniffing
+  X-Content-Type-Options: nosniff
+  
+  # Enable XSS protection
+  X-XSS-Protection: 1; mode=block
+  
+  # Control referrer information
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # Prevent access to sensitive features over HTTP
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  
+  # Content Security Policy - Allow necessary resources for the app
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' wss: ws: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'
+  
+  # Feature Policy - Restrict access to browser features
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), payment=()
+
+# Cache static assets for performance
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.css  
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=2592000
+
+/*.svg
+  Cache-Control: public, max-age=2592000

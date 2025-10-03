@@ -146,7 +146,7 @@ export interface ExecutionLog {
   level: 'info' | 'warn' | 'error' | 'debug';
   message: string;
   category: 'system' | 'browser' | 'ai' | 'user';
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export interface ExecutionMetrics {
@@ -173,7 +173,7 @@ export interface ExecutionEnvironment {
 // AI Integration
 export interface AIRequest {
   type: AIRequestType;
-  context: any;
+  context: Record<string, unknown>;
   prompt: string;
   testCase?: TestCase;
   execution?: TestExecution;
@@ -285,5 +285,5 @@ export interface AndroidNotification {
   title: string;
   message: string;
   timestamp: number;
-  data?: any;
+  data?: Record<string, unknown>;
 }

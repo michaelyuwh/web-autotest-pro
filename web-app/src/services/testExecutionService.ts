@@ -20,7 +20,8 @@ class TestExecutionServiceImpl implements TestExecutionService {
     timeout: 30000,
     screenshots: true,
     video: false,
-    slowMotion: 200
+    slowMotion: 200,
+    trace: false
   };
 
   async executeTestCase(testCase: TestCase, options: Partial<ExecutionOptions> = {}): Promise<TestExecution> {

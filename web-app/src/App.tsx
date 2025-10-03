@@ -1,14 +1,19 @@
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { Footer } from './components/layout/Footer';
 import { Dashboard } from './components/pages/Dashboard';
-import { TestCases } from './components/pages/TestCases';
-import { Recording } from './components/pages/Recording';
-import { Execution } from './components/pages/Execution';
-import { Reports } from './components/pages/Reports';
-import { Settings } from './components/pages/Settings';
+import { LoadingSpinner } from './components/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
+
+// Lazy load heavy components for better performance
+const TestCases = lazy(() => import('./components/pages/TestCases').then(m => ({ default: m.TestCases })));
+const Recording = lazy(() => import('./components/pages/Recording').then(m => ({ default: m.Recording })));
+const Execution = lazy(() => import('./components/pages/Execution').then(m => ({ default: m.Execution })));
+const Reports = lazy(() => import('./components/pages/Reports').then(m => ({ default: m.Reports })));
+const Settings = lazy(() => import('./components/pages/Settings').then(m => ({ default: m.Settings })));
 import { useAppStore } from './stores/app-store';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { PiPManager } from './components/recording/PiPManager';
@@ -20,10 +25,11 @@ function App() {
   const sidebarCollapsed = layout?.sidebarCollapsed ?? false;
 
   return (
-    <div 
-      className={`min-h-screen transition-all duration-300 ${theme === 'dark' ? 'dark' : ''}`}
-      data-theme={theme}
-    >
+    <ErrorBoundary>
+      <div 
+        className={`min-h-screen transition-all duration-300 ${theme === 'dark' ? 'dark' : ''}`}
+        data-theme={theme}
+      >
       <div className="flex h-screen bg-gradient-to-br from-blue-900 via-purple-800 to-indigo-900">
         {/* Sidebar */}
         <motion.aside
@@ -50,14 +56,16 @@ function App() {
               transition={{ duration: 0.5 }}
               className="h-full"
             >
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/test-cases" element={<TestCases />} />
-                <Route path="/recording" element={<Recording />} />
-                <Route path="/execution" element={<Execution />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/settings" element={<Settings />} />
-              </Routes>
+              <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/test-cases" element={<TestCases />} />
+                  <Route path="/recording" element={<Recording />} />
+                  <Route path="/execution" element={<Execution />} />
+                  <Route path="/reports" element={<Reports />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+              </Suspense>
             </motion.div>
           </main>
 
@@ -73,7 +81,8 @@ function App() {
       <PiPManager />
       <PWAPrompt />
       <OfflineIndicator />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }
 
