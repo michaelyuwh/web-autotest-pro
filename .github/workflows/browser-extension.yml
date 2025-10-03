@@ -35,7 +35,7 @@ jobs:
       run: |
         npm ci
         cd shared && npm ci
-        cd extension && npm ci
+        cd ../extension && npm ci
 
     - name: Build shared package
       run: |
