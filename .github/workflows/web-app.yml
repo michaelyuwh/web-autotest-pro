@@ -35,7 +35,7 @@ jobs:
       run: |
         npm ci
         cd shared && npm ci
-        cd ../web-app && npm ci
+        cd web-app && npm ci
 
     - name: Build shared package
       run: |
@@ -77,7 +77,7 @@ jobs:
       run: |
         npm ci
         cd shared && npm ci
-        cd ../web-app && npm ci
+        cd web-app && npm ci
 
     - name: Build shared package
       run: |

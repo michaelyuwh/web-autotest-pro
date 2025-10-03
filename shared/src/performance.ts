@@ -1,4 +1,24 @@
-import { TestCase, TestExecution } from './types';\n\n/**\n * Performance Monitoring and Caching Service\n * Provides intelligent caching, performance metrics, and optimization recommendations\n */\n\nexport interface ExecutionOptions {\n  browser?: string;\n  viewport?: { width: number; height: number };\n  timeout?: number;\n  headless?: boolean;\n  options?: Record<string, unknown>;\n}\n\nexport interface ExecutionKeyData {\n  testCaseId: string;\n  browser?: string;\n  viewport?: { width: number; height: number };\n  options?: Record<string, unknown>;\n}
+import { TestCase, TestExecution } from './types';
+
+/**
+ * Performance Monitoring and Caching Service
+ * Provides intelligent caching, performance metrics, and optimization recommendations
+ */
+
+export interface ExecutionOptions {
+  browser?: string;
+  viewport?: { width: number; height: number };
+  timeout?: number;
+  headless?: boolean;
+  options?: Record<string, unknown>;
+}
+
+export interface ExecutionKeyData {
+  testCaseId: string;
+  browser?: string;
+  viewport?: { width: number; height: number };
+  options?: Record<string, unknown>;
+}
 
 export interface PerformanceMetrics {
   startTime: number;

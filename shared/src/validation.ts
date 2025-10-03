@@ -272,4 +272,10 @@ export class InputValidator {
     }
     
     return sanitized as T;
-  }\n}\n\n// Rate limiter instances\nexport const aiServiceRateLimiter = InputValidator.createRateLimiter(10, 60000); // 10 requests per minute\nexport const fileUploadRateLimiter = InputValidator.createRateLimiter(5, 60000); // 5 uploads per minute\nexport const testExecutionRateLimiter = InputValidator.createRateLimiter(20, 60000); // 20 executions per minute
+  }
+}
+
+// Rate limiter instances
+export const aiServiceRateLimiter = InputValidator.createRateLimiter(10, 60000); // 10 requests per minute
+export const fileUploadRateLimiter = InputValidator.createRateLimiter(5, 60000); // 5 uploads per minute
+export const testExecutionRateLimiter = InputValidator.createRateLimiter(20, 60000); // 20 executions per minute

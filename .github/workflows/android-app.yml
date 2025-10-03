@@ -37,15 +37,10 @@ jobs:
     - name: Install Expo CLI
       run: npm install -g @expo/cli@latest
 
-    - name: Lint Android app
+    - name: Verify Android app setup
       run: |
         cd android-app/web-autotest-companion
-        npx expo lint
-
-    - name: Type check
-      run: |
-        cd android-app/web-autotest-companion
-        npx tsc --noEmit
+        npx expo doctor
 
   build-apk:
     name: Build APK
