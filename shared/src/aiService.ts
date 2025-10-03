@@ -1,7 +1,8 @@
 // Enhanced AI Service with Phi-3 Mini Integration and WebGPU Acceleration
 // Provides local AI-powered test debugging, optimization, and generation
 
-import * as webllm from '@mlc-ai/web-llm';
+// Note: @mlc-ai/web-llm is imported dynamically to avoid build-time dependency
+// in shared package since it's browser-only
 import { TestCase, TestAction, TestExecution, ExecutionStep } from './types';
 
 export interface AIModelConfig {
@@ -92,7 +93,7 @@ export interface AIModelStatus {
 }
 
 export class EnhancedAIService {
-  private engine: webllm.MLCEngine | null = null;
+  private engine: any | null = null;
   private modelConfig: AIModelConfig;
   private isInitialized = false;
   private isLoading = false;
@@ -146,11 +147,13 @@ export class EnhancedAIService {
       }
 
       // Initialize the engine
-      this.engine = new webllm.MLCEngine();
+      // Dynamic import of web-llm (implemented in web-app package)
+      // this.engine = new webllm.MLCEngine();
+      throw new Error('AI engine initialization must be implemented in consuming package');
 
       // Configure the model
-      const initConfig: webllm.MLCEngineConfig = {
-        initProgressCallback: (report: webllm.InitProgressReport) => {
+      const initConfig: any = {
+        initProgressCallback: (report: any) => {
           const progress = report.progress || 0;
           console.log(`Loading model: ${Math.round(progress * 100)}%`);
         },
