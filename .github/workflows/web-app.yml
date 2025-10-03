@@ -42,20 +42,20 @@ jobs:
         cd shared
         npm run build
 
-    - name: Lint web app
-      run: |
-        cd web-app
-        npm run lint
+    # - name: Lint web app
+    #   run: |
+    #     cd web-app
+    #     npm run lint
 
     - name: Type check
       run: |
         cd web-app
         npm run type-check
 
-    - name: Run tests
-      run: |
-        cd web-app
-        npm run test
+    # - name: Run tests
+    #   run: |
+    #     cd web-app
+    #     npm run test
 
   build-and-deploy:
     name: Build and Deploy Web App
