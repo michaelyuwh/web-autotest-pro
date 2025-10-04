@@ -173,13 +173,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Wait for deployment
-      run: sleep 60
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: |
+          web-app/package-lock.json
+          shared-package/package-lock.json
+
+    - name: Install dependencies for both packages
+      run: |
+        cd shared-package && npm ci
+        cd ../web-app && npm ci
+
+    - name: Build projects
+      run: |
+        cd shared-package && npm run build
+        cd ../web-app && npm run build
 
     - name: Lighthouse CI
-      run: |
-        npm install -g @lhci/cli@0.12.x
-        lhci autorun
-      env:
-        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-        LHCI_SERVER_BASE_URL: https://autotest-pro.dev # Replace with your domain
+      run: npx @lhci/cli@0.12.0 autorun --collect.staticDistDir=web-app/dist
