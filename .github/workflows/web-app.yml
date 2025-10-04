@@ -16,6 +16,13 @@ on:
 env:
   NODE_VERSION: '18.x'
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  security-events: write
+  actions: read
+
 jobs:
   lint-and-test:
     name: Lint and Test Web App
@@ -145,7 +152,7 @@ jobs:
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: 'trivy-results.sarif'
 
