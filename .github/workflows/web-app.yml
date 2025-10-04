@@ -119,6 +119,8 @@ jobs:
     - name: Setup GitHub Pages
       if: github.ref == 'refs/heads/main'
       uses: actions/configure-pages@v3
+      with:
+        enablement: true
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
