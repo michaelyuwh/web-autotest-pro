@@ -20,6 +20,7 @@ export const Header = () => {
           whileTap={{ scale: 0.95 }}
           onClick={toggleSidebar}
           className="glass-button p-2 rounded-lg"
+          aria-label="Toggle sidebar navigation"
         >
           <Menu className="w-5 h-5 text-white" />
         </motion.button>
@@ -68,6 +69,7 @@ export const Header = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="glass-button p-2 rounded-lg relative"
+            aria-label="View notifications (3 unread)"
           >
             <Bell className="w-5 h-5 text-white" />
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
@@ -80,6 +82,7 @@ export const Header = () => {
             whileTap={{ scale: 0.95 }}
             onClick={handleThemeToggle}
             className="glass-button p-2 rounded-lg"
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           >
             {theme === 'dark' ? (
               <Sun className="w-5 h-5 text-white" />
@@ -92,6 +95,7 @@ export const Header = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="glass-button p-2 rounded-lg"
+            aria-label="Open settings"
           >
             <Settings className="w-5 h-5 text-white" />
           </motion.button>

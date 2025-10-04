@@ -61,7 +61,9 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.debug', 'console.info']
+        pure_funcs: ['console.log', 'console.debug', 'console.info'],
+        unused: true,
+        dead_code: true
       },
       mangle: {
         safari10: true
@@ -69,6 +71,9 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['playwright', 'playwright-core'],
+      treeshake: {
+        moduleSideEffects: false
+      },
       output: {
         manualChunks: {
           // Core React dependencies - most stable, best for caching
@@ -112,8 +117,8 @@ export default defineConfig({
     },
     // Set realistic chunk size limits
     chunkSizeWarningLimit: 800,
-    // Enable source maps for production debugging
-    sourcemap: false, // Disable in production for smaller bundle
+    // Enable source maps for production debugging (required for Lighthouse)
+    sourcemap: true,
     // Enable asset inlining for small files
     assetsInlineLimit: 4096
   },

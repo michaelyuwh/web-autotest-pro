@@ -71,6 +71,7 @@ export const ToastContainer = () => {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => removeToast(toast.id)}
                 className="p-1 hover:bg-white/10 rounded transition-colors"
+                aria-label="Close notification"
               >
                 <X className="w-4 h-4" />
               </motion.button>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Web AutoTest Pro offline mode - Access your saved test cases and continue working while disconnected.">
     <title>Offline - Web AutoTest Pro</title>
     <style>
         * {
@@ -91,7 +92,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .cached-data h3 {
+        .cached-data h2 {
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
             color: #28A745;
@@ -157,13 +158,13 @@
             No internet connection detected. Don't worry - Web AutoTest Pro works offline with cached data and local storage!
         </p>
         
-        <button class="retry-button" onclick="checkConnection()">
+        <button class="retry-button" onclick="checkConnection()" aria-label="Check internet connection and try to go online">
             Try Again
         </button>
         
         <div class="cached-data">
-            <h3>✓ Available Offline Features</h3>
-            <div class="feature-list">
+            <h2>✓ Available Offline Features</h2>
+            <div class="feature-list"
                 <ul>
                     <li>View and edit saved test cases</li>
                     <li>Access local test recordings</li>
