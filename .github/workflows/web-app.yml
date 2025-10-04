@@ -173,20 +173,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
       with:
-        node-version: ${{ env.NODE_VERSION }}
-
-    - name: Install dependencies for both packages
-      run: |
-        cd shared-package && npm ci
-        cd ../web-app && npm ci
-
-    - name: Build projects
-      run: |
-        cd shared-package && npm run build
-        cd ../web-app && npm run build
+        name: web-app-build
+        path: web-app/dist
 
     - name: Lighthouse CI
       run: npx @lhci/cli@0.12.0 autorun --collect.staticDistDir=web-app/dist
