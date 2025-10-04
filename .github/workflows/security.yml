@@ -89,20 +89,20 @@ jobs:
         docker build -t web-autotest-pro:latest .
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         image-ref: 'web-autotest-pro:latest'
         format: 'sarif'
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy scan results
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
 
     - name: Run Trivy filesystem scan
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         scan-type: 'fs'
         format: 'json'
@@ -127,7 +127,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: javascript, python
 
@@ -144,10 +144,10 @@ jobs:
       run: npm run build
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
 
     - name: Run Semgrep scan
-      uses: returntocorp/semgrep-action@v1
+      uses: semgrep/semgrep-action@v1
       with:
         config: >-
           p/security-audit
@@ -173,17 +173,17 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd browser-extension
         npm ci
+        npm ci --workspaces
 
     - name: Build extension
       run: |
-        cd browser-extension
+        cd extension
         npm run build
 
     - name: Check manifest permissions
       run: |
-        cd browser-extension
+        cd extension
         node -e "
           const manifest = require('./dist/manifest.json');
           const permissions = manifest.permissions || [];
@@ -198,12 +198,12 @@ jobs:
 
     - name: Scan for hardcoded secrets
       run: |
-        cd browser-extension
+        cd extension
         grep -r -E "(api[_-]?key|password|secret|token)" dist/ || true
 
     - name: Check CSP headers
       run: |
-        cd browser-extension
+        cd extension
         node -e "
           const manifest = require('./dist/manifest.json');
           const csp = manifest.content_security_policy;
@@ -231,7 +231,7 @@ jobs:
     - name: Install mobile app dependencies
       run: |
         cd android-app/web-autotest-companion
-        npm ci
+        npm ci --legacy-peer-deps
 
     - name: Check for sensitive data in code
       run: |

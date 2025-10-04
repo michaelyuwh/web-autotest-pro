@@ -4,6 +4,7 @@
   "description": "Web AutoTest Pro Browser Extension",
   "scripts": {
     "build": "webpack --mode=production",
+    "build:firefox": "webpack --mode=production --env=firefox",
     "dev": "webpack --mode=development --watch",
     "clean": "rm -rf dist"
   },

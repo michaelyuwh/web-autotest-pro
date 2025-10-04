@@ -6,7 +6,7 @@ on:
     paths:
       - 'extension/**'
       - 'shared/**'
-      - '.github/workflows/extension.yml'
+      - '.github/workflows/browser-extension.yml'
   pull_request:
     branches: [ main ]
     paths:
@@ -34,8 +34,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm ci
-        cd shared && npm ci
-        cd ../extension && npm ci
+        npm ci --workspaces
 
     - name: Build shared package
       run: |
@@ -65,8 +64,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm ci
-        cd shared && npm ci
-        cd extension && npm ci
+        npm ci --workspaces
 
     - name: Build shared package
       run: |
@@ -75,8 +73,6 @@ jobs:
 
     - name: Build Chrome extension
       run: |
-        cd shared
-        npm run build
         cd extension
         npm run build
 
@@ -110,8 +106,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm ci
-        cd shared && npm ci
-        cd extension && npm ci
+        npm ci --workspaces
 
     - name: Build shared package
       run: |

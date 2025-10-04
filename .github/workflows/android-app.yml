@@ -32,7 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd android-app/web-autotest-companion
-        npm ci
+        npm ci --legacy-peer-deps
 
     - name: Install Expo CLI
       run: npm install -g @expo/cli@latest
@@ -57,6 +57,11 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
+    - name: Install dependencies
+      run: |
+        cd android-app/web-autotest-companion
+        npm ci --legacy-peer-deps
+
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
@@ -69,7 +74,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd android-app/web-autotest-companion
-        npm ci
+        npm ci --legacy-peer-deps
 
     - name: Install EAS CLI
       run: npm install -g eas-cli@latest
@@ -107,7 +112,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd android-app/web-autotest-companion
-        npm ci
+        npm ci --legacy-peer-deps
 
     - name: Install EAS CLI
       run: npm install -g eas-cli@latest
@@ -144,7 +149,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd android-app/web-autotest-companion
-        npm ci
+        npm ci --legacy-peer-deps
 
     - name: Build web version
       run: |

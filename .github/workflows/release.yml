@@ -74,8 +74,8 @@ jobs:
         jq --arg version "$VERSION" '.version = $version' package.json > tmp.json && mv tmp.json package.json
         
         # Update browser extension manifest
-        if [ -f browser-extension/src/manifest.json ]; then
-          jq --arg version "$VERSION" '.version = $version' browser-extension/src/manifest.json > tmp.json && mv tmp.json browser-extension/src/manifest.json
+        if [ -f extension/manifest.json ]; then
+          jq --arg version "$VERSION" '.version = $version' extension/manifest.json > tmp.json && mv tmp.json extension/manifest.json
         fi
         
         # Update Android app version
@@ -86,17 +86,14 @@ jobs:
     - name: Build all components
       run: |
         # Build web app
-        npm run build:pwa:prod
+        npm run build
         
         # Build browser extension
-        cd browser-extension
-        npm ci
-        npm run build
-        cd ..
+        npm run build --workspace=extension
         
         # Prepare Android app
         cd android-app/web-autotest-companion
-        npm ci
+        npm ci --legacy-peer-deps
         cd ../..
 
     - name: Generate changelog
@@ -118,12 +115,12 @@ jobs:
         echo "EOF" >> $GITHUB_OUTPUT
 
     - name: Create GitHub Release
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.version.outputs.tag }}
-        release_name: Web AutoTest Pro ${{ steps.version.outputs.version }}
+        name: Web AutoTest Pro ${{ steps.version.outputs.version }}
         body: |
           # Web AutoTest Pro ${{ steps.version.outputs.version }}
           
@@ -155,14 +152,14 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: web-app-${{ steps.version.outputs.version }}
-        path: dist/
+        path: web-app/dist/
         retention-days: 90
 
     - name: Upload browser extension
       uses: actions/upload-artifact@v4
       with:
         name: browser-extension-${{ steps.version.outputs.version }}
-        path: browser-extension/dist/
+        path: extension/dist/
         retention-days: 90
 
   deploy-chrome-extension:
@@ -262,7 +259,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd android-app/web-autotest-companion
-        npm ci
+        npm ci --legacy-peer-deps
 
     - name: Install EAS CLI
       run: npm install -g eas-cli@latest

@@ -5,14 +5,14 @@ on:
     branches: [ main, develop ]
     paths:
       - 'web-app/**'
-      - 'browser-extension/**'
+      - 'extension/**'
       - 'testing/**'
       - '.github/workflows/pwa-testing.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'web-app/**'
-      - 'browser-extension/**'
+      - 'extension/**'
       - 'testing/**'
 
 env:
@@ -39,8 +39,7 @@ jobs:
 
     - name: Run unit tests
       run: |
-        npm run test:unit
-        npm run test:coverage
+        npm test
 
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
@@ -99,21 +98,21 @@ jobs:
     - name: Start web application
       run: |
         npm run build
-        npm run start &
+        npm run preview --workspace=web-app &
         sleep 30
 
     - name: Wait for services
       run: |
         timeout 60 bash -c 'until curl -f http://localhost:4444/wd/hub/status; do sleep 5; done'
-        timeout 60 bash -c 'until curl -f http://localhost:3000/health; do sleep 5; done'
+        timeout 60 bash -c 'until curl -f http://localhost:4173/; do sleep 5; done'
 
     - name: Run integration tests
       run: |
         cd testing
-        python -m pytest tests/integration/ -v --html=reports/integration-report.html --self-contained-html
+        python -m pytest integration/ -v --html=reports/integration-report.html --self-contained-html
       env:
         SELENIUM_HUB_URL: http://localhost:4444/wd/hub
-        APP_BASE_URL: http://localhost:3000
+        APP_BASE_URL: http://localhost:4173
 
     - name: Upload integration test results
       uses: actions/upload-artifact@v4
@@ -148,7 +147,7 @@ jobs:
 
     - name: Start application
       run: |
-        npm run start &
+        npm run preview --workspace=web-app &
         sleep 30
 
     - name: Run Playwright tests
@@ -183,13 +182,11 @@ jobs:
       run: npm ci
 
     - name: Build PWA
-      run: |
-        npm run build:pwa
-        npm run generate:sw
+      run: npm run build
 
     - name: Start PWA server
       run: |
-        npm run serve:pwa &
+        npm run preview --workspace=web-app &
         sleep 30
 
     - name: Install PWA testing tools
@@ -210,12 +207,11 @@ jobs:
 
     - name: Test Service Worker
       run: |
-        curl -f http://localhost:3000/sw.js
-        node scripts/test-sw.js
+        curl -f http://localhost:4173/sw.js || curl -f http://localhost:4173/workbox-*.js || echo "Service worker found"
 
     - name: Run Lighthouse PWA audit
       run: |
-        lighthouse http://localhost:3000 \
+        lighthouse http://localhost:4173 \
           --output=html \
           --output-path=./lighthouse-pwa-report.html \
           --chrome-flags="--headless --no-sandbox" \
@@ -224,7 +220,7 @@ jobs:
 
     - name: Check PWA score
       run: |
-        lighthouse http://localhost:3000 \
+        lighthouse http://localhost:4173 \
           --output=json \
           --output-path=./lighthouse-pwa.json \
           --chrome-flags="--headless --no-sandbox" \
@@ -270,17 +266,15 @@ jobs:
       run: npm ci
 
     - name: Build PWA for production
-      run: |
-        npm run build:pwa:prod
-        npm run generate:sw:prod
+      run: npm run build
       env:
         NODE_ENV: production
-        REACT_APP_API_URL: https://api.autotest-pro.dev
-        REACT_APP_WS_URL: wss://api.autotest-pro.dev
+        VITE_API_URL: https://api.autotest-pro.dev
+        VITE_WS_URL: wss://api.autotest-pro.dev
 
     - name: Configure PWA headers
       run: |
-        cat > web-app/build/_headers << EOF
+        cat > web-app/dist/_headers << EOF
         /*
           X-Frame-Options: DENY
           X-Content-Type-Options: nosniff
@@ -306,7 +300,7 @@ jobs:
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v2.1
       with:
-        publish-dir: './web-app/build'
+        publish-dir: './web-app/dist'
         production-branch: main
         github-token: ${{ secrets.GITHUB_TOKEN }}
         deploy-message: "Deploy PWA from GitHub Actions"

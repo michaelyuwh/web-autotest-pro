@@ -41,8 +41,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm ci
-        cd shared && npm ci
-        cd ../web-app && npm ci
+        npm ci --workspaces
 
     - name: Build shared package
       run: |
@@ -83,8 +82,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm ci
-        cd shared && npm ci
-        cd ../web-app && npm ci
+        npm ci --workspaces
 
     - name: Build shared package
       run: |
@@ -151,7 +149,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         scan-type: 'fs'
         scan-ref: './web-app'
@@ -179,5 +177,19 @@ jobs:
         name: web-app-build
         path: web-app/dist
 
-    - name: Lighthouse CI
-      run: npx @lhci/cli@0.12.0 autorun --collect.staticDistDir=web-app/dist
+    - name: Setup Lighthouse CI
+      run: npm install -g @lhci/cli@0.12.0
+
+    - name: Run Lighthouse CI
+      run: lhci autorun
+      env:
+        LHCI_BUILD_CONTEXT__CURRENT_HASH: ${{ github.sha }}
+        LHCI_BUILD_CONTEXT__COMMIT_TIME: ${{ github.event.head_commit.timestamp }}
+
+    - name: Upload Lighthouse report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: lighthouse-report
+        path: .lighthouseci/
+        retention-days: 30
